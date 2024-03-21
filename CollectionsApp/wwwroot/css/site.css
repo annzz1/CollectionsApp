@@ -1,0 +1,211 @@
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 20px; /* Decreased padding for a more compact look */
+    height: 45px; /* Reduced height for a sleeker appearance */
+    color: #fff; /* Changed text color to white for better contrast */
+    border: none;
+    border-radius: 5px; /* Reduced border radius for a modern look */
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-right: 10px;
+}
+
+/* Primary button style */
+.btn-primary {
+    background-color: #007bff; /* Primary */
+}
+
+    /* Hover effect for primary button */
+    .btn-primary:hover {
+        background-color: #0056b3; /* Slightly darker shade of blue */
+    }
+
+/* Secondary button style */
+.btn-secondary {
+    background-color: #6c757d; /* Secondary */
+}
+
+    /* Hover effect for secondary button */
+    .btn-secondary:hover {
+        background-color: #5a6268; /* Slightly darker shade of gray */
+    }
+
+/* Info button style */
+.btn-info {
+    background-color: #17a2b8; /* Info */
+}
+
+    /* Hover effect for info button */
+    .btn-info:hover {
+        background-color: #13808f; /* Slightly darker shade of cyan */
+    }
+
+/* Success button style */
+.btn-success {
+    background-color: #28a745; /* Success */
+}
+
+    /* Hover effect for success button */
+    .btn-success:hover {
+        background-color: #218838; /* Slightly darker shade of green */
+    }
+
+/* Warning button style */
+.btn-warning {
+    background-color: #ffc107; /* Warning */
+}
+
+    /* Hover effect for warning button */
+    .btn-warning:hover {
+        background-color: #d39e00; /* Slightly darker shade of yellow */
+    }
+
+/* Danger button style */
+.btn-danger {
+    background-color: #dc3545; /* Danger */
+}
+
+    /* Hover effect for danger button */
+    .btn-danger:hover {
+        background-color: #c82333; /* Slightly darker shade of red */
+    }
+
+/* Light button style */
+.btn-light {
+    background-color: #f8f9fa; /* Light */
+}
+
+    /* Hover effect for light button */
+    .btn-light:hover {
+        background-color: #d9dce1; /* Slightly darker shade of light gray */
+    }
+
+/* Dark button style */
+.btn-dark {
+    background-color: #343a40; /* Dark */
+}
+
+    /* Hover effect for dark button */
+    .btn-dark:hover {
+        background-color: #292e33; /* Slightly darker shade of dark gray */
+    }
+.btn-softblue {
+    background-color: #407088;
+}
+    .btn-softblue:hover {
+        background-color: #132743;
+    }
+/* Container */
+.container {
+    margin-top: 50px;
+}
+
+/* Form */
+.form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+select {
+    appearance: none;
+    background-color: transparent;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 14a1 1 0 100-2 1 1 0 000 2z" fill="%239CA3AF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z" fill="%239CA3AF"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 20px;
+}
+
+.form-group.description {
+    width: 100%;
+}
+
+input[type="text"].description,
+textarea.description {
+    width: 100%;
+    height: 120px;
+}
+
+/* Links */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Table buttons */
+.td-buttons {
+    display: flex;
+    gap: 3px;
+    margin-right: 0;
+}
+
+    .td-buttons form button {
+        margin-right: 0;
+    }
+
+        .td-buttons form button .button__icon {
+            padding: 0 15px;
+        }
+.nav-link2 {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffcbcb; /* Button background color */
+    color: #fff; /* Button text color */
+    text-decoration: none; /* Remove underline */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+    margin-right: 10px;
+}
+
+    /* Hover effect */
+    .nav-link2:hover {
+        background-color: #ffcbcb;
+    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #ddd; /* Add outside border */
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1.5px solid #ddd;
+    border-right: 1.5px solid #ddd; /* Add border between columns */
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+

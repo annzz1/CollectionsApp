@@ -1,0 +1,57 @@
+﻿@model Collection
+@using CollectionsApp.Enums;
+
+@{
+    ViewData["Title"] = "Edit";
+    var categories = Enum.GetValues(typeof(Category));
+}
+
+<h1>Edit</h1>
+
+<h4>Collection</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" class="form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label">Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group description">
+                   
+                    <label asp-for="Description" class="control-label">Description</label>
+                    <textarea asp-for="Description" class="form-control description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="category" class="control-label">Category</label>
+                    <select asp-for="category" class="form-control" aria-required="true">
+                        <option value="">Select Category</option>
+                        @foreach (var categ in categories)
+                        {
+                            <option value=@categ>@categ</option>
+                        }
+                    </select>
+                    <span asp-validation-for="category" class="text-danger"></span>
+                </div>
+
+                <button id="newCollectionSubmit" type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Profile">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

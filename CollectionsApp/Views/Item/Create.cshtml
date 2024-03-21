@@ -1,0 +1,38 @@
+﻿@using CollectionsApp.ViewModels;
+
+@model ItemVM
+
+@{
+    ViewData["Title"] = "Create";
+   
+}
+
+<body>
+    <div class="row">
+        <div class="col-md-4">
+            <form id="newItemForm" method="post">
+                <h2 class="form-floating mb-3" style="color:blue">Create a new Item.</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Name" class="form-control" aria-required="true" />
+                    <label asp-for="Name">Name</label>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+
+                    <input asp-for="Tags" class="form-control" aria-required="true" />
+                    <label asp-for="Tags">Description</label>
+                    <span asp-validation-for="Tags" class="text-danger"></span>
+                </div>
+
+                <button id="newItemSubmit" type="submit" class="btn btn-primary">Create</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

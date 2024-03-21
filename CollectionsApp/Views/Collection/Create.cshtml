@@ -1,0 +1,108 @@
+﻿ @using CollectionsApp.ViewModels;
+@using CollectionsApp.Enums;
+@model CollectionVM
+@{
+    ViewData["Title"] = "Create";
+    var categories = Enum.GetValues(typeof(Category));
+    var customfieldtypes = Enum.GetValues(typeof(CustomFieldTypes));
+}
+<div class="row">
+        <div class="col-md-4">
+            <form id="newCollectionForm" method="post">
+                <h2 class="form-floating mb-3" style="color:blue">Create a new Collection.</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Name" class="form-control" aria-required="true" />
+                    <label asp-for="Name">Name</label>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+
+                    <input asp-for="Description" class="form-control" aria-required="true" />
+                    <label asp-for="Description">Description</label>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <select asp-for="category" class="form-select" aria-required="true">
+                        <option value="">Select Category</option>
+                        @foreach(var categ in categories)
+                        {
+                            <option value=@categ>@categ</option>
+                        }
+                    </select>
+                    <label asp-for="category">Category</label>
+                    <span asp-validation-for="category" class="text-danger"></span>
+                </div>
+
+                 <div id="CustomFields">
+                    <div class="customfield-temp" style="display: none;">
+                    <div class="form-group">
+                        <label>Field Type</label>
+                        <select class="form-control customfield-type" name="CustomFields[].customFieldType">
+                            <option value="">Select Field Type</option>
+                            @foreach (var fieldType in customfieldtypes)
+                            {
+                                <option value="@fieldType">@fieldType</option>
+                            }
+                        </select>
+                    </div>
+                        <div class="form-group">
+                            <label>Value</label>
+                            <input type="text" class="form-control customfield-name" name="CustomFields[].Value" maxlength="100">
+                        </div>
+                       
+                        <button type="button" class="btn btn-danger" style="margin-top:5px">Delete</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary " id="addBtn">Add Field</button>
+                <button type="submit" class="btn btn-primary ">Create</button>
+            </form>
+        </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addCustomFieldBtn = document.getElementById('addBtn');
+            const customFieldContainer = document.getElementById('CustomFields');
+
+            let customFieldIndex = 0;
+            addCustomFieldBtn.addEventListener('click', function () {
+
+                const customFieldTemplate = document.querySelector('.customfield-temp').cloneNode(true);
+
+                
+                customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Value`);
+                customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+
+              
+                customFieldIndex++;
+
+                customFieldTemplate.style.display = 'block';
+
+               
+                customFieldContainer.appendChild(customFieldTemplate);
+            });
+
+          
+            customFieldContainer.addEventListener('click', function (event) {
+                if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+                    
+                    event.target.closest('.custom-field-template').remove();
+                }
+            });
+
+            
+            document.querySelector('form').addEventListener('submit', function () {
+               
+                const template = document.querySelector('.custom-field-template');
+                if (template) {
+                    template.remove();
+                }
+            });
+        });
+        
+    </script>
+}

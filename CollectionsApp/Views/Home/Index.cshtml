@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> _signinmanager
+@inject UserManager<AppUser> _usermanager
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+   
+</div>
+@if (User.IsInRole("Admin"))
+{
+    <p>HI admin</p>
+}

@@ -1,0 +1,62 @@
+﻿@model Collection
+@{
+    ViewData["Title"] = "Items";
+}
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-info">
+                    
+                    <i class="fa-solid fa-plus" style="margin-right: 5px;"></i>Add Item
+                </button>
+            </form>
+            <form class="d-inline-block" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.AppUserId">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fa-solid fa-circle-chevron-left" style="margin-right: 5px;"></i>Back to collection(s)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table table-hover">
+                <thead class="thread">
+                    <tr class="table-danger">
+                        <th scope="col">Name</th>
+                        <th scope="col">Tags</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var Item in Model.Items)
+                    {
+                        <tr class="table-light">
+                            <td>@Item.Name</td>
+                            <td>@Item.Tags</td>
+                            <td class="td-buttons">
+                                <form asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
+                                    <button type="submit" class="button button-red">
+                                        <span class="button__text">Delete</span>
+                                        <span class="button__icon">
+                                            <ion-icon name="trash-outline"></ion-icon>
+                                        </span>
+                                    </button>
+                                </form>
+                                <form asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
+                                    <button type="submit" class="button button-yellow">
+                                        <span class="button__text">Edit</span>
+                                        <span class="button__icon">
+                                            <ion-icon name="create-outline"></ion-icon>
+                                        </span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
