@@ -3,6 +3,7 @@
 @{
     ViewData["title"] = "Profile";
     var categories = Enum.GetValues(typeof(Category));
+    
 }
 <div class="text-center">
     <h1 class="display-4">Profile</h1>
@@ -26,6 +27,8 @@
                         <th scope="col">Description</th>
                         <th scope="col">Category</th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +40,10 @@
                             </td>
                             <td>@collection.Description</td>
                             <td>@collection.category</td>
+                            @foreach(var cf in collection.CustomFields)
+                            {
+                                <td>@cf.Label</td>
+                            }
                             <td class="td-buttons">
                                 <form asp-controller="Collection"
                                       asp-action="Delete"

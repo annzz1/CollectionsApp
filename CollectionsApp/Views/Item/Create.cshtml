@@ -1,7 +1,6 @@
 ﻿@using CollectionsApp.ViewModels;
 
 @model ItemVM
-
 @{
     ViewData["Title"] = "Create";
    
@@ -11,7 +10,7 @@
     <div class="row">
         <div class="col-md-4">
             <form id="newItemForm" method="post">
-                <h2 class="form-floating mb-3" style="color:blue">Create a new Item.</h2>
+                <h2 class="form-floating mb-3" style="color:#132743">Create a new Item.</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
@@ -22,11 +21,20 @@
                 <div class="form-floating mb-3">
 
                     <input asp-for="Tags" class="form-control" aria-required="true" />
-                    <label asp-for="Tags">Description</label>
+                    <label asp-for="Tags">Tags</label>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
+                <div class="form-floating mb-3">
+                    @foreach (var cf in Model.customfields)
+                    {
+                        <input asp-for="@cf.Value" class="form-control" aria-required="true" />
+                        <label asp-for="@cf.Key">CustomField</label>
+                        <span asp-validation-for="@cf.Value" class="text-danger"></span>
+                    }
+                   
+                </div>
 
-                <button id="newItemSubmit" type="submit" class="btn btn-primary">Create</button>
+                <button id="newItemSubmit" type="submit" class="btn btn-softblue">Create</button>
             </form>
         </div>
 

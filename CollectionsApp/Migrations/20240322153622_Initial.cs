@@ -186,6 +186,7 @@ namespace CollectionsApp.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     customFieldType = table.Column<int>(type: "int", nullable: false),
+                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CollectionId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },

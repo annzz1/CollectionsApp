@@ -28,6 +28,7 @@ namespace CollectionsApp.Controllers
         
         [HttpPost]
         public async Task<IActionResult> Create(string Id, CollectionVM model)
+        
         {
             if (ModelState.IsValid)
             {
@@ -50,7 +51,7 @@ namespace CollectionsApp.Controllers
                             var customfield = new CustomField
                             {
                                 customFieldType = cf.customFieldType,
-                                Value = cf.Value,
+                                Label = cf.Label,
                                 collection = collection,
                                 CollectionId = collection.Id
                             };

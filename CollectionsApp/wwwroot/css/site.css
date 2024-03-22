@@ -14,22 +14,22 @@
 
 /* Primary button style */
 .btn-primary {
-    background-color: #007bff; /* Primary */
+    background-color: #f5843d; /* Primary */
 }
 
     /* Hover effect for primary button */
     .btn-primary:hover {
-        background-color: #0056b3; /* Slightly darker shade of blue */
+        background-color: #cc6423; /* Slightly darker shade of blue */
     }
 
 /* Secondary button style */
 .btn-secondary {
-    background-color: #6c757d; /* Secondary */
+    background-color: #bd42e3; /* Secondary */
 }
 
     /* Hover effect for secondary button */
     .btn-secondary:hover {
-        background-color: #5a6268; /* Slightly darker shade of gray */
+        background-color: #a71bd1; /* Slightly darker shade of gray */
     }
 
 /* Info button style */

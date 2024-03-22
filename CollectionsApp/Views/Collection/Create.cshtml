@@ -9,7 +9,7 @@
 <div class="row">
         <div class="col-md-4">
             <form id="newCollectionForm" method="post">
-                <h2 class="form-floating mb-3" style="color:blue">Create a new Collection.</h2>
+            <h2 class="form-floating mb-3" style="color:#132743">Create a new Collection.</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-floating mb-3">
 
-                    <input asp-for="Description" class="form-control" aria-required="true" />
+                    <textarea asp-for="Description" class="form-control" aria-required="true"></textarea>
                     <label asp-for="Description">Description</label>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
@@ -37,7 +37,7 @@
                 </div>
 
                  <div id="CustomFields">
-                    <div class="customfield-temp" style="display: none;">
+                    <div class="customfield-template" style="display: none;">
                     <div class="form-group">
                         <label>Field Type</label>
                         <select class="form-control customfield-type" name="CustomFields[].customFieldType">
@@ -50,14 +50,16 @@
                     </div>
                         <div class="form-group">
                             <label>Value</label>
-                            <input type="text" class="form-control customfield-name" name="CustomFields[].Value" maxlength="100">
+                            <input type="text" class="form-control customfield-name" name="CustomFields[].Label" maxlength="100">
                         </div>
-                       
-                        <button type="button" class="btn btn-danger" style="margin-top:5px">Delete</button>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-bottom:5px">Delete</button>
+                       </div>
+                        
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary " id="addBtn">Add Field</button>
-                <button type="submit" class="btn btn-primary ">Create</button>
+                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
+                <button type="submit" class="btn btn-info ">Create</button>
             </form>
         </div>
 </div>
@@ -71,10 +73,10 @@
             let customFieldIndex = 0;
             addCustomFieldBtn.addEventListener('click', function () {
 
-                const customFieldTemplate = document.querySelector('.customfield-temp').cloneNode(true);
+                const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
 
                 
-                customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Value`);
+                customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
                 customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
 
               
@@ -90,14 +92,14 @@
             customFieldContainer.addEventListener('click', function (event) {
                 if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
                     
-                    event.target.closest('.custom-field-template').remove();
+                    event.target.closest('.customfield-template').remove();
                 }
             });
 
             
             document.querySelector('form').addEventListener('submit', function () {
                
-                const template = document.querySelector('.custom-field-template');
+                const template = document.querySelector('.custom-field-tempate');
                 if (template) {
                     template.remove();
                 }

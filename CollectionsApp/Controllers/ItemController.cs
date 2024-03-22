@@ -42,11 +42,31 @@ namespace CollectionsApp.Controllers
 
                 };
 
-                var collection = await _context.Collections.FirstOrDefaultAsync(i => i.Id == Id);
+                var collection = await _context.Collections.Include(c=>c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
                 if (collection != null)
                 {
+                    foreach (var cf in collection.CustomFields)
+                    {
+                        if(cf.customFieldType == Enums.CustomFieldTypes.Text|| (cf.customFieldType == Enums.CustomFieldTypes.MultilineText))
+                        {
+                            item.customfields[cf.Label] = cf.Value.ToString();
+                        }
+                        else if(cf.customFieldType == Enums.CustomFieldTypes.Numeric)
+                        {
+                            item.customfields[cf.Label] = double.Parse(cf.Value);
+                        }
+                        else if (cf.customFieldType == Enums.CustomFieldTypes.Logical)
+                        {
+                            item.customfields[cf.Label] = bool.Parse(cf.Value);
+                        }
+                        else if (cf.customFieldType == Enums.CustomFieldTypes.DateTime)
+                        {
+                            item.customfields[cf.Label] = DateTime.Parse(cf.Value);
+                        }
+                    }
                     item.collection = collection;
                     item.CollectionId = collection.Id;
+
                     _context.Items.Add(item);
                     collection.Items.Add(item);
                     var result = await _context.SaveChangesAsync();

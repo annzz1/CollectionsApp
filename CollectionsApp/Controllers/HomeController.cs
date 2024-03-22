@@ -34,7 +34,8 @@ namespace CollectionsApp.Controllers
         
         public async Task<IActionResult> Profile(string Id)
         {
-            var user =  _userManager.Users.Include(u => u.Collections).FirstOrDefault(u => u.Id == Id);
+
+            var user = _userManager.Users.Include(u => u.Collections).ThenInclude(c => c.CustomFields).FirstOrDefault(u => u.Id == Id);
             if (user == null) { return NotFound(); }
             return View(user); 
  

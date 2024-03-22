@@ -37,19 +37,13 @@
                             <td>@Item.Tags</td>
                             <td class="td-buttons">
                                 <form asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
-                                    <button type="submit" class="button button-red">
-                                        <span class="button__text">Delete</span>
-                                        <span class="button__icon">
-                                            <ion-icon name="trash-outline"></ion-icon>
-                                        </span>
+                                    <button type="submit" class="btn btn-danger">Delete
+                                        <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
                                     </button>
                                 </form>
                                 <form asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
-                                    <button type="submit" class="button button-yellow">
-                                        <span class="button__text">Edit</span>
-                                        <span class="button__icon">
-                                            <ion-icon name="create-outline"></ion-icon>
-                                        </span>
+                                    <button type="submit" class="btn btn-success">
+                                        Edit <i class="fa-solid fa-sliders" style="margin-left: 5px"></i>
                                     </button>
                                 </form>
                             </td>

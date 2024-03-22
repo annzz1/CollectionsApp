@@ -9,7 +9,7 @@ namespace CollectionsApp.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
         
         public CustomFieldTypes customFieldType { get; set; }
-
+        public string Label {  get; set; }
         public string Value { get; set; }
         [ForeignKey("Collection")]
         public string CollectionId { get; set; }

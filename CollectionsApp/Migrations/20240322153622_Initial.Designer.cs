@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollectionsApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240321194615_Initial")]
+    [Migration("20240322153622_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -136,6 +136,10 @@ namespace CollectionsApp.Migrations
                     b.Property<string>("CollectionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Value")
                         .IsRequired()

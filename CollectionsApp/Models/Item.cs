@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CollectionsApp.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CollectionsApp.Models
@@ -12,6 +13,8 @@ namespace CollectionsApp.Models
         public string Name { get; set; } = string.Empty;
         [Required]
         public string Tags { get; set; } = string.Empty;
+        [NotMapped]
+        public Dictionary<string, object> customfields { get; set; } = new Dictionary<string, object>();
         [ForeignKey("Collection")]
         public string CollectionId { get; set; }
 
