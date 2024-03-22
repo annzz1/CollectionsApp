@@ -97,6 +97,14 @@
     .btn-softblue:hover {
         background-color: #132743;
     }
+.btn-softpink {
+    background-color: #ffcbcb;
+}
+
+    .btn-softpink:hover {
+        background-color: #ffb5b5;
+    }
+
 /* Container */
 .container {
     margin-top: 50px;
@@ -207,5 +215,32 @@ th {
 
 tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+
+.personal-info-box {
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #76b39d;
+}
+
+    .personal-info-box h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+.info {
+    color: #feffdf;
+    margin-bottom: 10px;
+}
+
+    .info strong {
+        margin-right: 5px;
+    }
+
+.header-container {
+    display: flex;
+    align-items: center;
 }
 

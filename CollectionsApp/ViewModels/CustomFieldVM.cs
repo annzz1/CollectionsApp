@@ -8,6 +8,6 @@ namespace CollectionsApp.ViewModels
     {
         public CustomFieldTypes customFieldType { get; set; }
         public string Label { get; set; }
-        public string ?Value { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 }

@@ -4,12 +4,10 @@
 @{
     ViewData["Title"] = "Edit";
     var categories = Enum.GetValues(typeof(Category));
+    var customfieldtypes = Enum.GetValues(typeof(CustomFieldTypes));
 }
 
-<h1>Edit</h1>
-
-<h4>Collection</h4>
-<hr />
+<h1 >Edit Collection</h1>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
@@ -39,19 +37,82 @@
                     </select>
                     <span asp-validation-for="category" class="text-danger"></span>
                 </div>
+                <div id="CustomFields">
+                    <div class="customfield-template" style="display: none;">
+                        <div class="form-group">
+                            <label>Field Type</label>
+                            <select class="form-control customfield-type" name="CustomFields[].customFieldType">
+                                <option value="">Select Field Type</option>
+                                @foreach (var fieldType in customfieldtypes)
+                                {
+                                    <option value="@fieldType">@fieldType</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Label</label>
+                            <input type="text" class="form-control customfield-name" name="CustomFields[].Label" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-bottom:5px">Delete</button>
+                        </div>
 
-                <button id="newCollectionSubmit" type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
+                <button type="submit" class="btn btn-info ">Save Changes</button>
             </form>
         </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Profile">Back to Profile</a>
-</div>
+    <div>
+        <a asp-action="Profile">Back to Profile</a>
+    </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+   }
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const addCustomFieldBtn = document.getElementById('addBtn');
+                const customFieldContainer = document.getElementById('CustomFields');
+
+                let customFieldIndex = 0;
+                addCustomFieldBtn.addEventListener('click', function () {
+
+                    const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
+
+
+                    customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
+                    customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+
+
+                    customFieldIndex++;
+
+                    customFieldTemplate.style.display = 'block';
+
+
+                    customFieldContainer.appendChild(customFieldTemplate);
+                });
+
+
+                customFieldContainer.addEventListener('click', function (event) {
+                    if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+
+                        event.target.closest('.customfield-template').remove();
+                    }
+                });
+
+
+                document.querySelector('form').addEventListener('submit', function () {
+
+                    const template = document.querySelector('.custom-field-tempate');
+                    if (template) {
+                        template.remove();
+                    }
+                });
+            });
+
+        </script>
     }
-}

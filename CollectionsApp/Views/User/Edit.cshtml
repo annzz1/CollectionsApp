@@ -1,0 +1,56 @@
+﻿@model AppUser
+@using CollectionsApp.Enums;
+
+@{
+    ViewData["Title"] = "Edit";
+    var categories = Enum.GetValues(typeof(Category));
+}
+
+<h2 style="color:#bd42e3; margin-left:15px">Edit User Information</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" class="form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="UserName" class="control-label">UserName</label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group description">
+
+                    <label asp-for="FirstName" class="control-label">FirstName</label>
+                    <input asp-for="FirstName" class="form-control"/>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="LastName" class="control-label">LastName</label>
+                    <input asp-for="LastName" class="form-control " />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+
+                    <label asp-for="Email" class="control-label">Email</label>
+                    <input asp-for="Email" class="form-control " />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <button id="newUserSubmit" type="submit" class="btn btn-secondary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Profile" asp-controller="Home"asp-route-id=@Model.Id>Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

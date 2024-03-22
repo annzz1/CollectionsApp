@@ -24,15 +24,23 @@
                     <label asp-for="Tags">Tags</label>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
-                <div class="form-floating mb-3">
-                    @foreach (var cf in Model.customfields)
-                    {
-                        <input asp-for="@cf.Value" class="form-control" aria-required="true" />
-                        <label asp-for="@cf.Key">CustomField</label>
-                        <span asp-validation-for="@cf.Value" class="text-danger"></span>
-                    }
-                   
-                </div>
+
+                <!-- Form content -->
+                @foreach (var customField in Model.customs)
+                {
+                    <div class="form-floating mb-3">
+                        <input name="customs[@customField.Key]" class="form-control"  />
+                        
+                        <label>@customField.Key</label>
+                    </div>
+                }
+
+            }
+                <!-- End of form content -->
+                       
+                           
+                  
+               
 
                 <button id="newItemSubmit" type="submit" class="btn btn-softblue">Create</button>
             </form>

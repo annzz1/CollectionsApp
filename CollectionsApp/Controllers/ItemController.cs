@@ -20,19 +20,43 @@ namespace CollectionsApp.Controllers
             _userManager = userManager;
         }
         [HttpGet]
-        public IActionResult Index(string Id)
+        public async Task<IActionResult> Index(string Id)
         {
-            var collection = _context.Collections.Include(u => u.Items).FirstOrDefault(u => u.Id == Id);
-           
+            var collection = await _context.Collections
+           .Include(u => u.Items)
+           .Include(u => u.CustomFields)
+           .FirstOrDefaultAsync(u => u.Id == Id);
             return View(collection);
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(string Id)
         {
-            return View();
+            var ItemsVM = new ItemVM
+            {
+                
+            };
+            if (Id == null)
+            {
+                return NotFound();
+            }
+            var collection = await _context.Collections
+            .Include(u => u.CustomFields)
+            .FirstOrDefaultAsync(u => u.Id == Id);
+
+            if (collection == null)
+            {
+                return NotFound();
+            }
+            foreach (var cf in collection.CustomFields)
+            {
+                ItemsVM.customs[cf.Label] = " ";
+            }
+
+            return View(ItemsVM);
+
         }
         [HttpPost]
-        public async Task<IActionResult> Create(string Id,ItemVM model)
+        public async Task<IActionResult> Create(string Id, [Bind("Name,Tags,customs")]ItemVM model)
         {    if (ModelState.IsValid)
             {
                 Item item = new Item

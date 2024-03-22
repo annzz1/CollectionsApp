@@ -26,7 +26,10 @@
                     <tr class="table-danger">
                         <th scope="col">Name</th>
                         <th scope="col">Tags</th>
-                        <th scope="col"></th>
+                        @foreach (var cft in Model.CustomFields)
+                        {
+                            <th>@cft.Label</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -35,6 +38,10 @@
                         <tr class="table-light">
                             <td>@Item.Name</td>
                             <td>@Item.Tags</td>
+                            @foreach (var cf in Item.customfields)
+                            {
+                                <td>@cf.Value</td>
+                            }
                             <td class="td-buttons">
                                 <form asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
                                     <button type="submit" class="btn btn-danger">Delete

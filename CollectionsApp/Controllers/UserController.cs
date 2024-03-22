@@ -4,6 +4,7 @@ using CollectionsApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
 
 namespace CollectionsApp.Controllers
@@ -109,6 +110,53 @@ namespace CollectionsApp.Controllers
             }
             _context.SaveChanges();
             return View(model);
+        }
+        public async Task<IActionResult> Edit(string Id)
+        {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+            var user = await userManager.Users.FirstOrDefaultAsync(x => x.Id == Id);
+
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> Edit(string Id, [Bind("FirstName,LastName,UserName,Email")] UserVM user)
+        {
+            if (Id.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var Currentuser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == Id);
+                Currentuser.FirstName = user.FirstName;
+                Currentuser.LastName = user.LastName;
+                Currentuser.UserName = user.UserName;
+                Currentuser.Email = user.Email;
+                try
+                {
+
+                    await userManager.UpdateAsync(Currentuser);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Profile", "Home", new { Id = Currentuser.Id });
+
+                }
+                catch (DbUpdateConcurrencyException)
+                { }
+                
+
+            }
+
+            return View(user);
         }
         public async Task<IActionResult> Logout()
         {
