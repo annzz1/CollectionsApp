@@ -66,45 +66,25 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const addCustomFieldBtn = document.getElementById('addBtn');
-            const customFieldContainer = document.getElementById('CustomFields');
+        const addCustomFieldBtn = document.getElementById('addBtn');
+        const customFieldContainer = document.getElementById('CustomFields');
+        let customFieldIndex = 0;
 
-            let customFieldIndex = 0;
-            addCustomFieldBtn.addEventListener('click', function () {
-
-                const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
-
-                
-                customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
-                customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
-
-              
-                customFieldIndex++;
-
-                customFieldTemplate.style.display = 'block';
-
-               
-                customFieldContainer.appendChild(customFieldTemplate);
-            });
-
-          
-            customFieldContainer.addEventListener('click', function (event) {
-                if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
-                    
-                    event.target.closest('.customfield-template').remove();
-                }
-            });
-
-            
-            document.querySelector('form').addEventListener('submit', function () {
-               
-                const template = document.querySelector('.custom-field-tempate');
-                if (template) {
-                    template.remove();
-                }
-            });
+        addCustomFieldBtn.addEventListener('click', function () {
+            const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
+            customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
+            customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+            customFieldIndex++;
+            customFieldTemplate.style.display = 'block';
+            customFieldContainer.appendChild(customFieldTemplate);
         });
+
+        customFieldContainer.addEventListener('click', function (event) {
+            if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+                event.target.closest('.customfield-template').remove();
+            }
+        });
+
         
     </script>
 }

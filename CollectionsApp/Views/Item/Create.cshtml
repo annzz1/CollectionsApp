@@ -24,6 +24,8 @@
                     <label asp-for="Tags">Tags</label>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
+              
+
 
                 <!-- Form content -->
                 @foreach (var customField in Model.customs)
@@ -34,8 +36,17 @@
                         <label>@customField.Key</label>
                     </div>
                 }
+                @using (Html.BeginForm("Create", "Item", FormMethod.Post))
+{
+                    foreach(var cf in Model.customs)
+                    {
+                       
+                     <input type="text" name="customs[@cf.Key]" value="@Model.customs[@cf.Key]" />
+                    }
 
-            }
+                    <button type="submit">Submit</button>
+}
+            
                 <!-- End of form content -->
                        
                            

@@ -85,18 +85,32 @@ namespace CollectionsApp.Controllers
             {
                 return NotFound();
             }
-            var collection = await _context.Collections.FindAsync(Id);
+            var collection = await _context.Collections.Include(c=>c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
             
 
             if (collection == null)
             {
                 return NotFound();
             }
-            return View(collection);
+            var collectionVM = new CollectionVM
+            {
+                Name = collection.Name,
+                category = collection.category,
+                Description = collection.Description,
+                CustomFields = collection.CustomFields.Select(cf => new CustomFieldVM
+                {
+                    Id = cf.Id,
+                    Label = cf.Label,
+                    customFieldType = cf.customFieldType
+
+                }).ToList()
+
+            };
+            return View(collectionVM);
         }
         [HttpPost]
        
-        public async Task<IActionResult> Edit(string Id, [Bind("Name,Description,category")]CollectionVM collection)
+        public async Task<IActionResult> Edit(string Id, CollectionVM collectionvm)
         {   if (Id.IsNullOrEmpty())
             {
                 return NotFound();
@@ -104,10 +118,41 @@ namespace CollectionsApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var CurrentCollection = _context.Collections.FirstOrDefault(i => i.Id == Id);
-                CurrentCollection.Name = collection.Name;
-                CurrentCollection.Description = collection.Description;
-                CurrentCollection.category = collection.category;
+                var CurrentCollection = await _context.Collections.Include(c => c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
+                CurrentCollection.Name = collectionvm.Name;
+                CurrentCollection.Description = collectionvm.Description;
+                CurrentCollection.category = collectionvm.category;
+                var DeletecustomFields = CurrentCollection.CustomFields.Where(cf => cf.Id != string.Empty && !collectionvm.CustomFields.Any(cfvm => cfvm.Id == cf.Id)).ToList();
+                _context.CustomFields.RemoveRange(DeletecustomFields);
+
+
+                foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id!=string.Empty )) // Filter out fields with Id = 0 (new)
+                {
+                    var inCustomField =CurrentCollection.CustomFields.FirstOrDefault(cf => cf.Id == cfvm.Id);
+
+                    if (inCustomField != null)
+                    {
+                        inCustomField.Label = cfvm.Label;
+                        inCustomField.customFieldType = cfvm.customFieldType;
+                        
+                        _context.CustomFields.Update(inCustomField);
+                      
+                    }
+                   
+                }
+
+                foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id == string.Empty))
+                {
+                    CurrentCollection.CustomFields.Add(new CustomField
+                    {
+                        Label = cfvm.Label,
+                        customFieldType = cfvm.customFieldType,
+                        CollectionId = CurrentCollection.Id,
+                        collection = CurrentCollection 
+                    }); 
+                }
+               
+
                 try
                 {
 
@@ -130,7 +175,7 @@ namespace CollectionsApp.Controllers
             
             }
            
-            return View(collection);
+            return View(collectionvm);
         }
         [HttpPost]
 

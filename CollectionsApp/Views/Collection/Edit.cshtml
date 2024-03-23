@@ -1,5 +1,6 @@
-﻿@model Collection
+﻿@model CollectionVM
 @using CollectionsApp.Enums;
+@using CollectionsApp.ViewModels
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,7 +14,7 @@
         <div class="col-md-6">
             <form asp-action="Edit" class="form">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
+                
                 <div class="form-group">
                     <label asp-for="Name" class="control-label">Name</label>
                     <input asp-for="Name" class="form-control" />
@@ -37,82 +38,214 @@
                     </select>
                     <span asp-validation-for="category" class="text-danger"></span>
                 </div>
-                <div id="CustomFields">
-                    <div class="customfield-template" style="display: none;">
-                        <div class="form-group">
-                            <label>Field Type</label>
-                            <select class="form-control customfield-type" name="CustomFields[].customFieldType">
-                                <option value="">Select Field Type</option>
-                                @foreach (var fieldType in customfieldtypes)
-                                {
-                                    <option value="@fieldType">@fieldType</option>
-                                }
-                            </select>
+                @for (var i = 0; i < Model.CustomFields.Count; i++)
+                {
+                    <div id="CustomFieldss-@i">
+                        <div class="custom-field" style="display: inline-block; margin-right: 20px;">
+                            <div class="form-group" style="display: inline-block;">
+                                <label asp-for="CustomFields[i].customFieldType" class="control-label" style="color:darkcyan">Field Type</label>
+                                <select asp-for="CustomFields[i].customFieldType" class="form-control" aria-required="true">
+                                    @foreach (var fieldType in customfieldtypes)
+                                    {
+                                        <option value="@fieldType">@fieldType</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CustomFields[i].customFieldType" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="display: inline-block;">
+                                <label asp-for="CustomFields[i].Label" class="control-label" style="color:darkcyan">Label</label>
+                                <input asp-for="CustomFields[i].Label" class="form-control" />
+                                <span asp-validation-for="CustomFields[i].Label" class="text-danger"></span>
+                            </div>
+
+                            <button type="button" class="btn btn-danger removecustom-field-btn" data-index="@i">Delete</button>
+
                         </div>
+                    </div>
+                }
+
+                  <div id="CustomFields">
+                    <div class="customfield-template" style="display: none;">
+                    <div class="form-group">
+                        <label>Field Type</label>
+                        <select class="form-control customfield-type" name="CustomFields[].customFieldType">
+                            <option value="">Select Field Type</option>
+                            @foreach (var fieldType in customfieldtypes)
+                            {
+                                <option value="@fieldType">@fieldType</option>
+                            }
+                        </select>
+                    </div>
                         <div class="form-group">
                             <label>Label</label>
                             <input type="text" class="form-control customfield-name" name="CustomFields[].Label" maxlength="100">
                         </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-bottom:5px">Delete</button>
-                        </div>
-
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-bottom:5px">Delete</button>
+                       </div>
+                        
                     </div>
                 </div>
+                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
+                <button type="submit" class="btn btn-info ">Create</button>
+            </form>
+        </div>
+</div>
+
+@section Scripts {
+    <script>
+        const addCustomFieldBtn = document.getElementById('addBtn');
+        const customFieldContainer = document.getElementById('CustomFields');
+            const customFieldContainerr = document.getElementById('CustomFieldss');
+           
+             let customFieldIndex = @Model.CustomFields.Count;
+
+            const deleteCustomFieldBtns = document.querySelectorAll('.removecustom-field-btn');
+           
+            // Attach event listener to each delete button
+            deleteCustomFieldBtns.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Retrieve the index from the data attribute
+                    const index = this.getAttribute('data-index');
+                    console.log('Clicked delete button index:', index); // Debugging statement
+
+                    // Find the corresponding container div
+                    const containerDiv = document.getElementById(`CustomFieldss-${index}`);
+                    console.log('Container div:', containerDiv); // Debugging statement
+
+                    if (!containerDiv) {
+                        console.error('Unable to find the custom field container');
+                        return; // Exit the function if the container div is not found
+                    }
+
+                    // Hide the container div
+                    containerDiv.style.display = 'none';
+                });
+            });
+
+
+            // Attach event listener to each delete button
+            deleteCustomFieldBtns.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Retrieve the index from the data attribute
+                    const index = this.getAttribute('data-index');
+                    console.log('Clicked delete button index:', index); // Debugging statement
+
+                    // Find the corresponding container div
+                    const containerDiv = document.getElementById(`CustomFieldss-${index}`);
+                    console.log('Container div:', containerDiv); // Debugging statement
+
+                    if (!containerDiv) {
+                        console.error('Unable to find the custom field container');
+                        return; // Exit the function if the container div is not found
+                    }
+
+                    // Remove the container div
+                    containerDiv.remove();
+                });
+            });
+        addCustomFieldBtn.addEventListener('click', function () {
+            const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
+            customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
+            customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+            customFieldIndex++;
+            customFieldTemplate.style.display = 'block';
+            customFieldContainer.appendChild(customFieldTemplate);
+        });
+
+        customFieldContainer.addEventListener('click', function (event) {
+            if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+                event.target.closest('.customfield-template').remove();
+            }
+        });
+
+        
+    </script>
+
+    }
+
+
+
+
+
+
+
+
+
+
+@* 
                 <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
                 <button type="submit" class="btn btn-info ">Save Changes</button>
             </form>
         </div>
     </div>
 
-    <div>
-        <a asp-action="Profile">Back to Profile</a>
-    </div>
+   
+ </div>
 
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-   }
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const addCustomFieldBtn = document.getElementById('addBtn');
-                const customFieldContainer = document.getElementById('CustomFields');
+ @section Scripts{
 
-                let customFieldIndex = 0;
-                addCustomFieldBtn.addEventListener('click', function () {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+<script>
+   
 
-                    const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
+    document.addEventListener('DOMContentLoaded', function () {
+        const addCustomFieldBtn = document.getElementById('addBtn');
+        const customFieldContainer = document.getElementById('CustomFields');
+        const customFieldContainerr = document.getElementById('CustomFieldss');
+            const deleteCustomFieldBtns = document.querySelectorAll('.removecustom-field-btn');
 
+        let customFieldIndex = 0;
+        addCustomFieldBtn.addEventListener('click', function () {
+            const customFieldTemplate = document.querySelector('.customfield-template').cloneNode(true);
 
-                    customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
-                    customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+            customFieldTemplate.querySelector('.customfield-type').setAttribute('name', `CustomFields[${customFieldIndex}].customFieldType`);
+            customFieldTemplate.querySelector('.customfield-name').setAttribute('name', `CustomFields[${customFieldIndex}].Label`);
 
+            customFieldIndex++;
 
-                    customFieldIndex++;
+            customFieldTemplate.style.display = 'block';
 
-                    customFieldTemplate.style.display = 'block';
+            customFieldContainer.appendChild(customFieldTemplate);
+        });
 
+            deleteCustomFieldBtns.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    // Stop event propagation
+                    event.stopPropagation();
 
-                    customFieldContainer.appendChild(customFieldTemplate);
-                });
+                    // Find the parent container div with class custom-field
+                    const containerDiv = this.closest('.custom-field');
 
-
-                customFieldContainer.addEventListener('click', function (event) {
-                    if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
-
-                        event.target.closest('.customfield-template').remove();
+                    if (!containerDiv) {
+                        console.error('Unable to find the custom field container');
+                        return; // Exit the function if the container div is not found
                     }
-                });
 
-
-                document.querySelector('form').addEventListener('submit', function () {
-
-                    const template = document.querySelector('.custom-field-tempate');
-                    if (template) {
-                        template.remove();
-                    }
+                    // Remove the container div
+                    containerDiv.remove();
                 });
             });
+     
 
-        </script>
-    }
+
+        customFieldContainer.addEventListener('click', function (event) {
+            if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+
+                event.target.closest('.customfield-template').remove();
+            }
+        });
+
+
+        document.querySelector('form').addEventListener('submit', function () {
+
+            const template = document.querySelector('.custom-field-tempate');
+            if (template) {
+                template.remove();
+            }
+        });
+    });
+</script>
+} *@

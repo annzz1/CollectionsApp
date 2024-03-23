@@ -26,7 +26,7 @@ namespace CollectionsApp.Models
 
         public virtual AppUser appUser { get; set; }
         public virtual ICollection<Item> Items { get; set; }
-        public virtual ICollection<CustomField> CustomFields { get; set; }
+        public virtual List<CustomField> CustomFields { get; set; }
         /////
         //TO DO OTHER OPTIONAL FEILDS
 
