@@ -1,18 +1,25 @@
-﻿
-@model Collection
+﻿@using CollectionsApp.ViewModels
+@model ItemPageVM
 @{
     ViewData["Title"] = "Items";
 }
+
 <div class="container mt-5">
     <div class="row mb-3">
         <div class="col-md-6">
-            <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.Id">
+            <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.collection.Id">
                 <button type="submit" class="btn btn-info">
-                    
                     <i class="fa-solid fa-plus" style="margin-right: 5px;"></i>Add Item
                 </button>
             </form>
-            <form class="d-inline-block" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.AppUserId">
+            <form id="DeleteItemForm" asp-controller="Item" asp-action="Delete" method="post">
+                <input type="hidden" id="DeleteItemFormItemIds" name="itemIds" />
+                <button type="submit" class="btn btn-danger">
+                    Delete
+                    <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
+                </button>
+            </form>
+            <form class="d-inline-block" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.collection.AppUserId">
                 <button type="submit" class="btn btn-warning">
                     <i class="fa-solid fa-circle-chevron-left" style="margin-right: 5px;"></i>Back to collection(s)
                 </button>
@@ -25,33 +32,26 @@
             <table class="table table-hover">
                 <thead class="thread">
                     <tr class="table-danger">
+                        <th scope="col"><input type="checkbox" id="selectAll" /></th>
                         <th scope="col">Name</th>
                         <th scope="col">Tags</th>
-                        @foreach (var cft in Model.CustomFields)
+                        @foreach (var cf in Model.collection.CustomFields)
                         {
-                            <th>@cft.Label</th>
+                            <th>@cf.Label</th>
                         }
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var Item in Model.Items)
+                    @foreach (var Item in Model.items)
                     {
                         <tr class="table-light">
+                            <td><input type="checkbox" class="selectSingle" value="@Item.Id" /></td>
                             <td>@Item.Name</td>
                             <td>@Item.Tags</td>
-                            
-                            <td class="td-buttons">
-                                <form asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
-                                    <button type="submit" class="btn btn-danger">Delete
-                                        <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
-                                    </button>
-                                </form>
-                                <form asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
-                                    <button type="submit" class="btn btn-success">
-                                        Edit <i class="fa-solid fa-sliders" style="margin-left: 5px"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            @foreach (var cf in Item.ItemCustomFieldVals)
+                            {
+                                <th>@cf.Value</th>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -59,3 +59,67 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const rowCheckboxes = document.querySelectorAll('.selectSingle');
+            const deleteItemForm = document.getElementById('DeleteItemForm');
+            const deleteItemFormItemIds = document.getElementById('DeleteItemFormItemIds');
+
+            selectAllCheckbox.addEventListener('click', function () {
+                rowCheckboxes.forEach(function (checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                    updateSelectedItemIds();
+                });
+            });
+
+            rowCheckboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', updateSelectedItemIds);
+            });
+
+            function updateSelectedItemIds() {
+                const selectedItemIds = Array.from(rowCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                deleteItemFormItemIds.value = selectedItemIds.join(',');
+            }
+
+            deleteItemForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const itemIds = deleteItemFormItemIds.value;
+
+                if (itemIds.trim() === '') {
+                    alert('Please select at least one item to delete.');
+                    return;
+                }
+
+                // Send the AJAX request
+                fetch('@Url.Action("Delete", "Item")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ itemIds: itemIds })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Handle the successful response
+                            console.log('Items deleted successfully');
+                            // Optionally, you can refresh the page or update the UI
+                            location.reload();
+                        } else {
+                            // Handle the error response
+                            console.error('Error deleting items:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        // Handle any other errors
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
+}

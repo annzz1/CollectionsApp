@@ -22,9 +22,17 @@ namespace CollectionsApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string Id)
         {
-            var collection = await _context.Collections.Include(x => x.Items).Include(x=> x.CustomFields).FirstOrDefaultAsync(i => i.Id == Id);
-            var items =  await _context.Items.Include(x => x.ItemCustomFieldVals).FirstOrDefaultAsync(u => u.CollectionId == Id);
-            return View(collection);
+            var collection_ = await _context.Collections.Include(x => x.Items).Include(x=> x.CustomFields).FirstOrDefaultAsync(i => i.Id == Id);
+            var items = await _context.Items
+            .Include(x => x.ItemCustomFieldVals)
+            .Where(u => u.CollectionId == Id)
+            .ToListAsync();
+            var itemPageVM = new ItemPageVM
+            {
+                collection = collection_,
+                items = items
+            };
+            return View(itemPageVM);
         }
         [HttpGet]
         public async Task<IActionResult> Create(string Id)
@@ -103,26 +111,32 @@ namespace CollectionsApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Delete(string Id)
+        public async Task<IActionResult> Delete(string itemIds)
         {
-
-            if (Id.IsNullOrEmpty())
+            List<string> ItemIds = itemIds.Split(',').ToList();
+            if (ItemIds.IsNullOrEmpty())
             {
-                return NotFound();
+                return BadRequest();
             }
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == Id);
-            if (item != null)
+            foreach (var id in ItemIds)
             {
-                _context.Items.Remove(item);
-                _context.SaveChanges();
+                var item = await _context.Items
+                .Include(x => x.ItemCustomFieldVals)
+                .FirstOrDefaultAsync(u => u.CollectionId == id);
+                if (item != null)
+                {
+                    _context.CustomFieldsValues.RemoveRange(item.ItemCustomFieldVals);
+                    _context.Items.Remove(item);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index", "Item", new { Id = item.CollectionId });
 
-                return RedirectToAction("Index", "Item", new { Id = item.CollectionId });
-
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
-            {
-                return NotFound();
-            }
+            return RedirectToAction("Index", "Item");
 
 
         }
