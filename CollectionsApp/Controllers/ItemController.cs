@@ -22,10 +22,8 @@ namespace CollectionsApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string Id)
         {
-            var collection = await _context.Collections
-           .Include(u => u.Items)
-           .Include(u => u.CustomFields)
-           .FirstOrDefaultAsync(u => u.Id == Id);
+            var collection = await _context.Collections.Include(x => x.Items).Include(x=> x.CustomFields).FirstOrDefaultAsync(i => i.Id == Id);
+            var items =  await _context.Items.Include(x => x.ItemCustomFieldVals).FirstOrDefaultAsync(u => u.CollectionId == Id);
             return View(collection);
         }
         [HttpGet]
@@ -53,8 +51,9 @@ namespace CollectionsApp.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create(string Id,ItemVM model)
-        {    if (ModelState.IsValid)
+        public async Task<IActionResult> Create(string Id, ItemVM model)
+        {
+            if (ModelState.IsValid)
             {
                 Item item = new Item
                 {
@@ -62,42 +61,33 @@ namespace CollectionsApp.Controllers
                     Tags = model.Tags
 
                 };
-
-                var collection = await _context.Collections.Include(c=>c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
+                var collection = await _context.Collections.Include(c => c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
                 if (collection != null)
                 {
                     foreach (var cf in collection.CustomFields)
                     {
-                        var currrentCF = await _context.CustomFields.FirstOrDefaultAsync(i => i.CollectionId == collection.Id);
-                        currrentCF.Value = model.customs[cf.Label];
-                        _context.CustomFields.Update(currrentCF);
-                        if(cf.customFieldType == Enums.CustomFieldTypes.Text|| (cf.customFieldType == Enums.CustomFieldTypes.MultilineText))
+                        var cfValue = new ItemCustomFieldVal
                         {
-                            item.customfields[cf.Label] = cf.Value.ToString();
-                           
-                        }
-                        else if(cf.customFieldType == Enums.CustomFieldTypes.Numeric)
-                        {
-                            item.customfields[cf.Label] = double.Parse(cf.Value);
-                        }
-                        else if (cf.customFieldType == Enums.CustomFieldTypes.Logical)
-                        {
-                            item.customfields[cf.Label] = bool.Parse(cf.Value);
-                        }
-                        else if (cf.customFieldType == Enums.CustomFieldTypes.DateTime)
-                        {
-                            item.customfields[cf.Label] = DateTime.Parse(cf.Value);
-                        }
+                            Item = item,
+                            ItemId = item.Id,
+                            CustomField = cf,
+                            CustomFieldId = cf.Id,
+                            Value = model.customs[cf.Label]
+                        };
+                        item.ItemCustomFieldVals.Add(cfValue);
+                        cf.CustomFieldVals.Add(cfValue);
+                        _context.CustomFieldsValues.Add(cfValue);
                     }
                     item.collection = collection;
                     item.CollectionId = collection.Id;
 
                     _context.Items.Add(item);
                     collection.Items.Add(item);
+                    _context.Collections.Update(collection);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
-                        _context.Collections.Update(collection);
+                       
                         return RedirectToAction("Index", "Item", new { Id = Id });
                     }
                     else
@@ -105,6 +95,8 @@ namespace CollectionsApp.Controllers
                         ModelState.AddModelError("", "Unsuccessful add attempt!");
                     }
                 }
+
+               
             }
             return View(model);
         }
@@ -151,7 +143,7 @@ namespace CollectionsApp.Controllers
         }
         [HttpPost]
 
-        public async Task<IActionResult> Edit(string Id, [Bind("Name,Tags")] ItemVM item)
+        public async Task<IActionResult> Edit(string Id, ItemVM item)
         {
             if (Id.IsNullOrEmpty())
             {

@@ -13,12 +13,16 @@ namespace CollectionsApp.Models
         public string Name { get; set; } = string.Empty;
         [Required]
         public string Tags { get; set; } = string.Empty;
-        [NotMapped]
-        public Dictionary<string, object> customfields { get; set; } = new Dictionary<string, object>();
+      
         [ForeignKey("Collection")]
         public string CollectionId { get; set; }
 
         public virtual Collection collection { get; set; }
-       
+        public virtual ICollection<ItemCustomFieldVal> ItemCustomFieldVals { get; set; }
+
+        public Item()
+        {
+            ItemCustomFieldVals = new List<ItemCustomFieldVal>();
+        }
     }
 }

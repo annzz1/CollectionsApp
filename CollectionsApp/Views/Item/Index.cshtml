@@ -39,10 +39,7 @@
                         <tr class="table-light">
                             <td>@Item.Name</td>
                             <td>@Item.Tags</td>
-                            @foreach (var cf in Item.customfields)
-                            {
-                                <td>@cf.Value</td>
-                            }
+                            
                             <td class="td-buttons">
                                 <form asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
                                     <button type="submit" class="btn btn-danger">Delete

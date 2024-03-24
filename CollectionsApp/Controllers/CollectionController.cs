@@ -56,13 +56,13 @@ namespace CollectionsApp.Controllers
                                 CollectionId = collection.Id
                             };
                             _context.CustomFields.Add(customfield);
-                            collection.CustomFields.Add(customfield);
+                           // collection.CustomFields.Add(customfield);
                         }
                     }
                     collection.appUser = user;
                     collection.AppUserId = user.Id;
                     _context.Collections.Add(collection);
-                    user.Collections.Add(collection);
+                    //user.Collections.Add(collection);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {

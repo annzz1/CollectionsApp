@@ -187,7 +187,6 @@ namespace CollectionsApp.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     customFieldType = table.Column<int>(type: "int", nullable: false),
                     Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CollectionId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -219,6 +218,32 @@ namespace CollectionsApp.Migrations
                         principalTable: "Collection",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemCustomFieldVal",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomFieldId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemCustomFieldVal", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemCustomFieldVal_CustomField_CustomFieldId",
+                        column: x => x.CustomFieldId,
+                        principalTable: "CustomField",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemCustomFieldVal_Item_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Item",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -274,6 +299,16 @@ namespace CollectionsApp.Migrations
                 name: "IX_Item_CollectionId",
                 table: "Item",
                 column: "CollectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemCustomFieldVal_CustomFieldId",
+                table: "ItemCustomFieldVal",
+                column: "CustomFieldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemCustomFieldVal_ItemId",
+                table: "ItemCustomFieldVal",
+                column: "ItemId");
         }
 
         /// <inheritdoc />
@@ -295,13 +330,16 @@ namespace CollectionsApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ItemCustomFieldVal");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "CustomField");
 
             migrationBuilder.DropTable(
                 name: "Item");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Collection");

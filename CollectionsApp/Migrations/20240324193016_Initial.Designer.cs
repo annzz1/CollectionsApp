@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollectionsApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240322153622_Initial")]
+    [Migration("20240324193016_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -141,10 +141,6 @@ namespace CollectionsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("customFieldType")
                         .HasColumnType("int");
 
@@ -177,6 +173,32 @@ namespace CollectionsApp.Migrations
                     b.HasIndex("CollectionId");
 
                     b.ToTable("Item");
+                });
+
+            modelBuilder.Entity("CollectionsApp.Models.ItemCustomFieldVal", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomFieldId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomFieldId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemCustomFieldVal");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -345,6 +367,25 @@ namespace CollectionsApp.Migrations
                     b.Navigation("collection");
                 });
 
+            modelBuilder.Entity("CollectionsApp.Models.ItemCustomFieldVal", b =>
+                {
+                    b.HasOne("CollectionsApp.Models.CustomField", "CustomField")
+                        .WithMany("CustomFieldVals")
+                        .HasForeignKey("CustomFieldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollectionsApp.Models.Item", "Item")
+                        .WithMany("ItemCustomFieldVals")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CustomField");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -406,6 +447,16 @@ namespace CollectionsApp.Migrations
                     b.Navigation("CustomFields");
 
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("CollectionsApp.Models.CustomField", b =>
+                {
+                    b.Navigation("CustomFieldVals");
+                });
+
+            modelBuilder.Entity("CollectionsApp.Models.Item", b =>
+                {
+                    b.Navigation("ItemCustomFieldVals");
                 });
 #pragma warning restore 612, 618
         }
