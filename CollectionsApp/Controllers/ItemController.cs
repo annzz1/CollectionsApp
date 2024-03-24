@@ -31,10 +31,7 @@ namespace CollectionsApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(string Id)
         {
-            var ItemsVM = new ItemVM
-            {
-                
-            };
+            var ItemsVM = new ItemVM();
             if (Id == null)
             {
                 return NotFound();
@@ -56,7 +53,7 @@ namespace CollectionsApp.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create(string Id, [Bind("Name,Tags,customs")]ItemVM model)
+        public async Task<IActionResult> Create(string Id,ItemVM model)
         {    if (ModelState.IsValid)
             {
                 Item item = new Item
@@ -71,9 +68,13 @@ namespace CollectionsApp.Controllers
                 {
                     foreach (var cf in collection.CustomFields)
                     {
+                        var currrentCF = await _context.CustomFields.FirstOrDefaultAsync(i => i.CollectionId == collection.Id);
+                        currrentCF.Value = model.customs[cf.Label];
+                        _context.CustomFields.Update(currrentCF);
                         if(cf.customFieldType == Enums.CustomFieldTypes.Text|| (cf.customFieldType == Enums.CustomFieldTypes.MultilineText))
                         {
                             item.customfields[cf.Label] = cf.Value.ToString();
+                           
                         }
                         else if(cf.customFieldType == Enums.CustomFieldTypes.Numeric)
                         {

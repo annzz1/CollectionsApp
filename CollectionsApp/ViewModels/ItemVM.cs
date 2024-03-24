@@ -8,6 +8,10 @@ namespace CollectionsApp.ViewModels
         public string Name { get; set; } = string.Empty;
         [Required]
         public string Tags { get; set; } = string.Empty;
-        public Dictionary<string, object> customs { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, string> customs { get; set; }
+        public ItemVM()
+        {
+            customs = new Dictionary<string, string>();
+        }
     }
 }

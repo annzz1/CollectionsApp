@@ -24,36 +24,21 @@
                     <label asp-for="Tags">Tags</label>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
-              
-
-
-                <!-- Form content -->
-                @foreach (var customField in Model.customs)
-                {
-                    <div class="form-floating mb-3">
-                        <input name="customs[@customField.Key]" class="form-control"  />
-                        
-                        <label>@customField.Key</label>
+                <div class="form-floating mb-3">
+                    <div class="custom-field">
+                        @foreach (var item in Model.customs)
+                        {
+                            <div>
+                                <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
+                                <label>@item.Key</label>
+                                <span asp-validation-for="@Model.customs[item.Key]" class="text-danger"></span>
+                            </div>
+                        }
                     </div>
-                }
-                @using (Html.BeginForm("Create", "Item", FormMethod.Post))
-{
-                    foreach(var cf in Model.customs)
-                    {
-                       
-                     <input type="text" name="customs[@cf.Key]" value="@Model.customs[@cf.Key]" />
-                    }
+                </div>
 
-                    <button type="submit">Submit</button>
-}
-            
-                <!-- End of form content -->
-                       
-                           
-                  
-               
-
-                <button id="newItemSubmit" type="submit" class="btn btn-softblue">Create</button>
+                <button id="NewItemForm">Submit</button>
+              
             </form>
         </div>
 
@@ -61,5 +46,28 @@
 </body>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+  
+
+    <script>
+        const SubmitBtn = document.getElementById('newSubmit');
+
+        SubmitBtn.addEventListener('click', function () {
+            const formData = new FormData();
+            const customs = document.querySelectorAll('.custom-field');
+            customs.forEach(function (field) {
+                console.log('Inside loop');
+                const key = field.querySelector('.custom-Value').getAttribute('data-key');
+                const value = field.querySelector('.custom-Value').value;
+                console.log(Key: ${ key }, Value: ${ value });
+                formData.append(customs[${ key }], ${ value });
+            });
+
+            formData.forEach((value, key) => {
+                console.log(${ key }: ${ value });
+            });
+           
+        });
+    </script>
 }
 
