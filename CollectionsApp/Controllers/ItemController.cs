@@ -187,6 +187,7 @@ namespace CollectionsApp.Controllers
         }
         public async Task<IActionResult> Edit(string Id)
         {
+            
             if (Id == null)
             {
                 return NotFound();
@@ -196,12 +197,22 @@ namespace CollectionsApp.Controllers
             {
                 return NotFound();
             }
-            return View(item);
+            var edititemVM = new EditItemVM
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Tags = item.Tags
+            };
+            foreach (var cf in item.ItemCustomFieldVals)
+            {
+                edititemVM.ItemCustomVals[cf.Label] = cf.Value;
+            }
+            return View(edititemVM);
            
         }
         [HttpPost]
 
-        public async Task<IActionResult> Edit(string Id, Item item)
+        public async Task<IActionResult> Edit(string Id,EditItemVM item)
         {
             if (Id.IsNullOrEmpty())
             {

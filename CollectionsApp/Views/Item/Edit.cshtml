@@ -1,10 +1,8 @@
 ﻿@using CollectionsApp.ViewModels
-@model Item
-
+@model EditItemVM
 
 @{
     ViewData["Title"] = "Edit";
-   
 }
 
 <h1>Edit</h1>
@@ -14,36 +12,32 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <form asp-action="Edit" class="form">
+            <form asp-action="Edit" method="post" class="form">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="@Model.Id" />
+                <input type="hidden" asp-for="Id" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label">Name</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-
                     <label asp-for="Tags" class="control-label">Tags</label>
-                    <input asp-for="Tags" class="form-control"></>
+                    <input asp-for="Tags" class="form-control" />
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    @foreach (var cfv in Model.ItemCustomFieldVals)
-                    {
-                        <div class="custom-field-row">
-                            <label asp-for="@cfv.Label" class="control-label">@cfv.Label</label>
-                            <input asp-for="@cfv.Value" class="form-control" />
-                            <span asp-validation-for="@cfv.Label" class="text-danger"></span>
-                            <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-left:5px">Delete</button>
-                        </div>
-                    }
-                </div>
+                @foreach (var item in Model.ItemCustomVals)
+                {
+                    <div class="form-group">
+                        <label>@item.Key</label>
+                        <input asp-for="ItemCustomVals[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
+                        <span asp-validation-for="ItemCustomVals[item.Key]" class="text-danger"></span>
+                        <button type="button" class="btn btn-danger remove-custom-field-btn" data-index="@item.Key">Delete</button>
+                    </div>
+                }
 
-               
-                        
-               
-               
+
+
+                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
                 <button id="newItemSubmit" type="submit" class="btn btn-info">Save Changes</button>
             </form>
         </div>
@@ -55,7 +49,50 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteCustomFieldBtns = document.querySelectorAll('.remove-custom-field-btn');
+
+            // Attach event listener to each delete button
+            deleteCustomFieldBtns.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Retrieve the index from the data attribute
+                    const index = this.getAttribute('data-index');
+                    console.log('Clicked delete button index:', index); // Debugging statement
+
+                    // Find the corresponding container div
+                    const formGroup = this.closest('.form-group');
+                    console.log('Container div:', formGroup); // Debugging statement
+
+                    if (!formGroup) {
+                        console.error('Unable to find the custom field container');
+                        return; // Exit the function if the container div is not found
+                    }
+
+                    // Remove the container div
+                    formGroup.remove();
+                });
+            });
+        });
+
+        const SubmitBtn = document.getElementById('newItemSubmit');
+
+        SubmitBtn.addEventListener('click', function () {
+            const formData = new FormData();
+            const customs = document.querySelectorAll('.custom-field');
+
+            customs.forEach(function (field) {
+                console.log('Inside loop');
+                const key = field.querySelector('.custom-Value').getAttribute('data-key');
+                const value = field.querySelector('.custom-Value').value;
+                console.log('Key:', key, ', Value:', value);
+                formData.append(`customs[${key}]`, value);
+            });
+
+            formData.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            });
+        });
+    </script>
 }

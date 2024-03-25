@@ -18,18 +18,16 @@
                 </button>
             </form>
             <form class="d-inline-block ml-2" asp-controller="Items" asp-action="Index" method="get">
-                <label class="mr-2">Sort by:</label>
+              
                 <select class="form-control form-control-sm" onchange="location = this.value;">
                     <option value="@Url.Action("Index", new { sortOrder = ViewBag.CurrentSort, Id = Model.collection.Id, searchString = ViewBag.SearchString })">-Select Column --</option>
                     <option value="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, Id = Model.collection.Id, searchString = ViewBag.SearchString })">Name</option>
                     <option value="@Url.Action("Index", new { sortOrder = ViewBag.TagsSortParam, Id = Model.collection.Id, searchString = ViewBag.SearchString })">Tags</option>
-                    
+                  
                 </select>
             </form>
         </div>
     </div>
-
-    <!-- Your table code goes here -->
 </div>
 
 
@@ -53,13 +51,27 @@
                         <tr class="table-light">
                             <td>@Item.Name</td>
                             <td>@Item.Tags</td>
-                            @foreach (var cf in Item.ItemCustomFieldVals)
-                            {
-                                <td>@cf.Value</td>
-                            }
-                            <td class="td-buttons">
-                                <!-- Your existing form for delete and edit buttons -->
-                            </td>
+                        @foreach (var cf in Model.collection.CustomFields)
+                        {
+                            var customFieldVal = Item.ItemCustomFieldVals.FirstOrDefault(icf => icf.CustomFieldId == cf.Id);
+                            <td>@(customFieldVal != null ? customFieldVal.Value : "")</td>
+                        }
+                        <td class="td-buttons">
+                            <form id="DeleteItemForm" asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
+                                <input type="hidden" id="DeleteItemFormItemIds" name="itemIds" />
+                                <button type="submit" class="btn btn-danger" style="display: inline-block;">
+                                    Delete
+                                    <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
+                                </button>
+                            </form>
+
+                            <form id="EditItemForm_@Item.Id" asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
+                                <input type="hidden" id="EditItemFormItemIds_@Item.Id" name="itemIds" />
+                                <button type="submit" class="btn btn-success" form="EditItemForm_@Item.Id" style="display: inline-block;">
+                                    Edit <i class="fa-solid fa-sliders" style="margin-left: 5px"></i>
+                                </button>
+                            </form>
+                        </td>
                         </tr>
                     }
                 </tbody>

@@ -132,9 +132,6 @@ namespace CollectionsApp.Controllers
                 CurrentCollection.Name = collectionvm.Name;
                 CurrentCollection.Description = collectionvm.Description;
                 CurrentCollection.category = collectionvm.category;
-                var DeletecustomFields = CurrentCollection.CustomFields.Where(cf => cf.Id != string.Empty && !collectionvm.CustomFields.Any(cfvm => cfvm.Id == cf.Id)).ToList();
-                _context.CustomFields.RemoveRange(DeletecustomFields);
-
 
                 foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id != string.Empty)) // Filter out fields with Id = 0 (new)
                 {
@@ -161,7 +158,8 @@ namespace CollectionsApp.Controllers
                         collection = CurrentCollection
                     });
                 }
-
+                var DeletecustomFields = CurrentCollection.CustomFields.Where(cf => cf.Id != string.Empty && !collectionvm.CustomFields.Any(cfvm => cfvm.Id == cf.Id)).ToList();
+                _context.CustomFields.RemoveRange(DeletecustomFields);
 
                 try
                 {
@@ -199,12 +197,13 @@ namespace CollectionsApp.Controllers
             foreach (var id in ids)
             {
                 var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.Id == id);
+                var userid = await _context.Collections.FirstOrDefaultAsync(c => c.AppUserId == collection_.AppUserId);
                 if (collection_ != null)
                 {
                     _context.Collections.Remove(collection_);
                     _context.SaveChanges();
 
-                    return RedirectToAction("Profile", "Home", new { Id = collection_.AppUserId });
+                    return RedirectToAction("Profile", "Home", new { Id =userid });
 
                 }
                 else

@@ -29,15 +29,19 @@
                         @foreach (var item in Model.customs)
                         {
                             <div>
-                                <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
                                 <label>@item.Key</label>
+                                <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
+                               
                                 <span asp-validation-for="@Model.customs[item.Key]" class="text-danger"></span>
                             </div>
                         }
                     </div>
                 </div>
 
-                <button id="NewItemForm">Submit</button>
+              
+                <button id="NewItemForm" type="submit" class="btn btn-info">
+                    <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Submit
+                </button>
               
             </form>
         </div>
