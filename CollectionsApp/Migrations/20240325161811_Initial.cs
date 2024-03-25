@@ -227,6 +227,7 @@ namespace CollectionsApp.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ItemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CustomFieldId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

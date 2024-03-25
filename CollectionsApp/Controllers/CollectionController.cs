@@ -79,39 +79,49 @@ namespace CollectionsApp.Controllers
             var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.AppUserId == Id);
             return View(collection_);
         }
-        public async Task<IActionResult> Edit(string Id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(string ids)
         {
-            if (Id == null)
+            if (ids == null)
             {
                 return NotFound();
             }
-            var collection = await _context.Collections.Include(c=>c.CustomFields).FirstOrDefaultAsync(c => c.Id == Id);
-            
-
-            if (collection == null)
+            List<string> Ids = ids.Split(',').ToList();
+            foreach (var id in Ids)
             {
-                return NotFound();
-            }
-            var collectionVM = new CollectionVM
-            {
-                Name = collection.Name,
-                category = collection.category,
-                Description = collection.Description,
-                CustomFields = collection.CustomFields.Select(cf => new CustomFieldVM
+                var collection = await _context.Collections.Include(x => x.CustomFields).FirstOrDefaultAsync(c => c.Id == id);
+                if (collection != null)
                 {
-                    Id = cf.Id,
-                    Label = cf.Label,
-                    customFieldType = cf.customFieldType
+                    var collectionVM = new CollectionVM
+                    {
+                        Id = collection.Id,
+                        Name = collection.Name,
+                        category = collection.category,
+                        Description = collection.Description,
+                        CustomFields = collection.CustomFields.Select(cf => new CustomFieldVM
+                        {
+                            Id = cf.Id,
+                            Label = cf.Label,
+                            customFieldType = cf.customFieldType
 
-                }).ToList()
+                        }).ToList()
 
-            };
-            return View(collectionVM);
+                    };
+                    return View(collectionVM);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            return View();
+
         }
         [HttpPost]
-       
+
         public async Task<IActionResult> Edit(string Id, CollectionVM collectionvm)
-        {   if (Id.IsNullOrEmpty())
+        {
+            if (Id.IsNullOrEmpty())
             {
                 return NotFound();
             }
@@ -126,19 +136,19 @@ namespace CollectionsApp.Controllers
                 _context.CustomFields.RemoveRange(DeletecustomFields);
 
 
-                foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id!=string.Empty )) // Filter out fields with Id = 0 (new)
+                foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id != string.Empty)) // Filter out fields with Id = 0 (new)
                 {
-                    var inCustomField =CurrentCollection.CustomFields.FirstOrDefault(cf => cf.Id == cfvm.Id);
+                    var inCustomField = CurrentCollection.CustomFields.FirstOrDefault(cf => cf.Id == cfvm.Id);
 
                     if (inCustomField != null)
                     {
                         inCustomField.Label = cfvm.Label;
                         inCustomField.customFieldType = cfvm.customFieldType;
-                        
+
                         _context.CustomFields.Update(inCustomField);
-                      
+
                     }
-                   
+
                 }
 
                 foreach (var cfvm in collectionvm.CustomFields.Where(vmcf => vmcf.Id == string.Empty))
@@ -148,10 +158,10 @@ namespace CollectionsApp.Controllers
                         Label = cfvm.Label,
                         customFieldType = cfvm.customFieldType,
                         CollectionId = CurrentCollection.Id,
-                        collection = CurrentCollection 
-                    }); 
+                        collection = CurrentCollection
+                    });
                 }
-               
+
 
                 try
                 {
@@ -159,7 +169,7 @@ namespace CollectionsApp.Controllers
                     _context.Collections.Update(CurrentCollection);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Profile", "Home", new { Id = CurrentCollection.AppUserId });
-                    
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -172,38 +182,43 @@ namespace CollectionsApp.Controllers
                         throw;
                     }
                 }
-            
+
             }
-           
+
             return View(collectionvm);
         }
         [HttpPost]
 
-        public async Task<IActionResult> Delete(string Id)
+        public async Task<IActionResult> Delete(List<string> ids)
         {
-           
-            if (Id.IsNullOrEmpty())
+
+            if (ids.IsNullOrEmpty())
             {
                 return NotFound();
             }
-            var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.Id == Id);
-            if (collection_ != null)
+            foreach (var id in ids)
             {
-                _context.Collections.Remove(collection_);
-                _context.SaveChanges();
+                var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.Id == id);
+                if (collection_ != null)
+                {
+                    _context.Collections.Remove(collection_);
+                    _context.SaveChanges();
 
-                return RedirectToAction("Profile", "Home", new { Id = collection_.AppUserId });
+                    return RedirectToAction("Profile", "Home", new { Id = collection_.AppUserId });
+
+                }
+                else
+                {
+                    return NotFound();
+                }
 
             }
-            else
-            {
-                return NotFound();
-            }
-           
+            return View();
+
 
         }
-        
-       
+
+
 
     }
 }

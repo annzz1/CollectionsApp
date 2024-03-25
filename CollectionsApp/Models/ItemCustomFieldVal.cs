@@ -1,16 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿
 
 namespace CollectionsApp.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
     public class ItemCustomFieldVal
     {
         [Key]
@@ -23,7 +17,7 @@ namespace CollectionsApp.Models
         [ForeignKey("CustomField")]
         public string CustomFieldId { get; set; } // Changed property name to avoid conflict
         public virtual CustomField CustomField { get; set; }
-
+        public string Label { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
 
         public ItemCustomFieldVal()

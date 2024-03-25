@@ -20,20 +20,66 @@ namespace CollectionsApp.Controllers
             _userManager = userManager;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(string Id)
+        public async Task<IActionResult> Index(string Id, string sortOrder, string searchString)
         {
-            var collection_ = await _context.Collections.Include(x => x.Items).Include(x=> x.CustomFields).FirstOrDefaultAsync(i => i.Id == Id);
-            var items = await _context.Items
-            .Include(x => x.ItemCustomFieldVals)
-            .Where(u => u.CollectionId == Id)
-            .ToListAsync();
+            // Fetch collection data
+            var collection_ = await _context.Collections
+                .Include(x => x.Items)
+                .Include(x => x.CustomFields)
+                .FirstOrDefaultAsync(i => i.Id == Id);
+
+            // Fetch items data
+            var itemsQuery = _context.Items
+                .Include(x => x.ItemCustomFieldVals)
+                .Where(u => u.CollectionId == Id);
+
+            // Apply search filter if a search string is provided
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                itemsQuery = itemsQuery.Where(i => i.Name.Contains(searchString) || i.Tags.Contains(searchString));
+            }
+
+            // Apply sorting based on sort column and direction
+            switch (sortOrder)
+            {
+                case "Name":
+                    itemsQuery = itemsQuery.OrderBy(i => i.Name);
+                    break;
+                case "name_desc":
+                    itemsQuery = itemsQuery.OrderByDescending(i => i.Name);
+                    break;
+                case "Tags":
+                    itemsQuery = itemsQuery.OrderBy(i => i.Tags);
+                    break;
+                case "tags_desc":
+                    itemsQuery = itemsQuery.OrderByDescending(i => i.Tags);
+                    break;
+                // Add more cases for other columns if needed
+                default:
+                    itemsQuery = itemsQuery.OrderBy(i => i.Name); // Default sorting by Name in ascending order
+                    break;
+            }
+
+            // Execute the query
+            var items = await itemsQuery.ToListAsync();
+
+            // Populate the view model
             var itemPageVM = new ItemPageVM
             {
                 collection = collection_,
                 items = items
             };
+
+            // Set ViewBag for sorting parameters
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParam = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewBag.TagsSortParam = sortOrder == "Tags" ? "tags_desc" : "Tags";
+            // Add more ViewBag parameters for other columns if needed
+
             return View(itemPageVM);
         }
+
+
         [HttpGet]
         public async Task<IActionResult> Create(string Id)
         {
@@ -80,7 +126,8 @@ namespace CollectionsApp.Controllers
                             ItemId = item.Id,
                             CustomField = cf,
                             CustomFieldId = cf.Id,
-                            Value = model.customs[cf.Label]
+                            Value = model.customs[cf.Label],
+                            Label = cf.Label
                         };
                         item.ItemCustomFieldVals.Add(cfValue);
                         cf.CustomFieldVals.Add(cfValue);
@@ -95,7 +142,7 @@ namespace CollectionsApp.Controllers
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
-                       
+
                         return RedirectToAction("Index", "Item", new { Id = Id });
                     }
                     else
@@ -104,25 +151,24 @@ namespace CollectionsApp.Controllers
                     }
                 }
 
-               
+
             }
             return View(model);
         }
 
         [HttpPost]
 
-        public async Task<IActionResult> Delete(string itemIds)
+        public async Task<IActionResult> Delete(string Id)
         {
-            List<string> ItemIds = itemIds.Split(',').ToList();
-            if (ItemIds.IsNullOrEmpty())
+          
+            if (Id.IsNullOrEmpty())
             {
                 return BadRequest();
             }
-            foreach (var id in ItemIds)
-            {
+            
                 var item = await _context.Items
                 .Include(x => x.ItemCustomFieldVals)
-                .FirstOrDefaultAsync(u => u.CollectionId == id);
+                .FirstOrDefaultAsync(u => u.Id == Id);
                 if (item != null)
                 {
                     _context.CustomFieldsValues.RemoveRange(item.ItemCustomFieldVals);
@@ -135,9 +181,8 @@ namespace CollectionsApp.Controllers
                 {
                     return NotFound();
                 }
-            }
-            return RedirectToAction("Index", "Item");
-
+            
+           
 
         }
         public async Task<IActionResult> Edit(string Id)
@@ -146,18 +191,17 @@ namespace CollectionsApp.Controllers
             {
                 return NotFound();
             }
-            var item = await _context.Items.FindAsync(Id);
-
-
+            var item = await _context.Items.Include(x => x.ItemCustomFieldVals).FirstOrDefaultAsync(u => u.Id == Id);
             if (item == null)
             {
                 return NotFound();
             }
             return View(item);
+           
         }
         [HttpPost]
 
-        public async Task<IActionResult> Edit(string Id, ItemVM item)
+        public async Task<IActionResult> Edit(string Id, Item item)
         {
             if (Id.IsNullOrEmpty())
             {

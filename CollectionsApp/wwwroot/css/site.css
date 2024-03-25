@@ -244,3 +244,23 @@ tr:nth-child(even) {
     align-items: center;
 }
 
+.custom-field-row {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 10px; /* Adjust as needed */
+}
+
+    .custom-field-row label {
+        flex: 1; /* Allow label to take up remaining space */
+        margin-right: 10px; /* Adjust spacing between label and input */
+    }
+
+    .custom-field-row input {
+        flex: 3; /* Adjust as needed */
+        /* Add any additional styling for inputs */
+    }
+
+    .custom-field-row .btn {
+        flex: 1; /* Adjust as needed */
+        /* Add any additional styling for buttons */
+    }

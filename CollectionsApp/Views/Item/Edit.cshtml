@@ -1,4 +1,5 @@
-﻿@model Item
+﻿@using CollectionsApp.ViewModels
+@model Item
 
 
 @{
@@ -15,7 +16,7 @@
         <div class="col-md-6">
             <form asp-action="Edit" class="form">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="@Model.Id" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label">Name</label>
                     <input asp-for="Name" class="form-control" />
@@ -27,8 +28,22 @@
                     <input asp-for="Tags" class="form-control"></>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
+                <div class="form-group">
+                    @foreach (var cfv in Model.ItemCustomFieldVals)
+                    {
+                        <div class="custom-field-row">
+                            <label asp-for="@cfv.Label" class="control-label">@cfv.Label</label>
+                            <input asp-for="@cfv.Value" class="form-control" />
+                            <span asp-validation-for="@cfv.Label" class="text-danger"></span>
+                            <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-left:5px">Delete</button>
+                        </div>
+                    }
+                </div>
 
-
+               
+                        
+               
+               
                 <button id="newItemSubmit" type="submit" class="btn btn-info">Save Changes</button>
             </form>
         </div>

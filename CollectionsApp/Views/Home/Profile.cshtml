@@ -14,10 +14,8 @@
                 Edit <i class="fa-regular fa-pen-to-square" style="margin-left: 5px;"></i>
             </button>
         </form>
-    </div>
 
-
-        
+    </div>  
     <div class="info">
         <strong>UserName:  @Model.UserName</strong>
     </div>
@@ -31,56 +29,44 @@
         <strong>Email: @Model.Email</strong>
     </div>
 </div>
+
 <div class="container mt-5">
     <div class="row">
         <div class="col">
-            <form method="get"
-                  asp-controller="Collection"
-                  asp-action="Create"
-                  asp-route-id="@Model.Id"
-                  class="mb-3">
+            <!-- Add Collection Form -->
+            <form method="get" asp-controller="Collection" asp-action="Create" asp-route-id="@Model.Id" class="mb-3">
                 <button type="submit" class="btn btn-success">
                     <i class="fa-solid fa-folder-plus" style="margin-right: 5px;"></i> Add Collection
                 </button>
             </form>
+            <!-- Delete and Edit Buttons -->
+            <div class="mb-3">
+                <button type="button" class="btn btn-danger deleteSelected">Delete Selected</button>
+                <button type="button" class="btn btn-warning editSelected">Edit Selected</button>
+            </div>
+            <!-- Table -->
             <table class="table table-hover">
+                <!-- Table Header -->
                 <thead class="thead" style="background-color:#ffb5b5">
                     <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll" /></th>
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Category</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
-                       
                     </tr>
                 </thead>
+                <!-- Table Body -->
                 <tbody>
                     @foreach (var collection in Model.Collections)
                     {
                         <tr class="table-light">
-                            <td>
-                                <a href="@Url.Action("Index", "Item",new {id = collection.Id})">@collection.Name</a>
-                            </td>
+                            <td><input type="checkbox" class="selectSingle" value="@collection.Id" /></td>
+                            <td><a href="@Url.Action("Index", "Item", new {id = collection.Id})">@collection.Name</a></td>
                             <td>@collection.Description</td>
                             <td>@collection.category</td>
-                            <td class="td-buttons">
-                                <form asp-controller="Collection"
-                                      asp-action="Delete"
-                                      method="post"
-                                      asp-route-id="@collection.Id">
-                                    <button type="submit" class="btn btn-danger">
-                                        Delete<i class="fa-regular fa-trash-can" style="margin-left: 5px;"></i>
-                                    </button>
-                                </form>
-                                <form asp-controller="Collection"
-                                      asp-action="Edit"
-                                      method="get"
-                                      asp-route-id="@collection.Id">
-                                    <button type="submit" class="btn btn-warning">
-                                        Edit<i class="fa-regular fa-pen-to-square" style="margin-left: 5px;"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            <td class="td-buttons"></td>
                         </tr>
                     }
                 </tbody>
@@ -88,3 +74,50 @@
         </div>
     </div>
 </div>
+
+
+<!-- JavaScript -->
+<script>
+    // Function to handle delete selected action
+    $(".deleteSelected").click(function () {
+        var selectedIds = [];
+        $(".selectSingle:checked").each(function () {
+            selectedIds.push($(this).val());
+        });
+        if (selectedIds.length > 0) {
+            var confirmation = confirm("Are you sure you want to delete the selected collections?");
+            if (confirmation) {
+                // Send POST request to delete selected collections
+                $.post({
+                    url: "@Url.Action("Delete", "Collection")",
+                    data: { ids: selectedIds },
+                    success: function (response) {
+                        // Handle success response
+                        window.location.reload(); // Refresh the page or perform other actions as needed
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error(xhr.responseText);
+                        alert("An error occurred while deleting the collections.");
+                    }
+                });
+            }
+        } else {
+            alert("Please select at least one collection to delete.");
+        }
+    });
+    $(".editSelected").click(function () {
+        var selectedIds = [];
+        $(".selectSingle:checked").each(function () {
+            selectedIds.push($(this).val());
+        });
+        if (selectedIds.length > 0) {
+            var url = "@Url.Action("Edit", "Collection")";
+            url += "?ids=" + selectedIds.join(",");
+            window.location.href = url;
+        } else {
+            alert("Please select at least one collection to edit.");
+        }
+    });
+ 
+</script>
