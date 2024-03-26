@@ -13,7 +13,8 @@ namespace CollectionsApp.Models
         public string Name { get; set; } = string.Empty;
         [Required]
         public string Tags { get; set; } = string.Empty;
-      
+        
+        public DateTime AddedTime { get; set; }= DateTime.Now;
         [ForeignKey("Collection")]
         public string CollectionId { get; set; }
 

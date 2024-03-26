@@ -24,9 +24,26 @@ namespace CollectionsApp.Controllers
             _context = context;
 
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var collections = await _context.Collections.Include(i=>i.appUser).Include(i => i.Items).Include(x => x.CustomFields).ToListAsync();
+            
+            // Calculate item counts for each collection
+            var collectionItemCounts = collections
+                .Select(c => new
+                {
+                    Collection = c,
+                    ItemCount = c.Items.Count
+                });
+
+            // Sort collections based on item count in descending order
+            var sortedCollections = collectionItemCounts
+                .OrderByDescending(ci => ci.ItemCount)
+                .Select(ci => ci.Collection)
+                .Take(5)
+                .ToList();
+
+            return View(sortedCollections);
         }
         
        

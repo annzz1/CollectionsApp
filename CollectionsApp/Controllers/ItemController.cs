@@ -1,6 +1,8 @@
 ﻿using CollectionsApp.Data;
+using CollectionsApp.Enums;
 using CollectionsApp.Models;
 using CollectionsApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +21,12 @@ namespace CollectionsApp.Controllers
             _context = context;
             _userManager = userManager;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(string Id, string sortOrder, string searchString)
         {
             // Fetch collection data
-            var collection_ = await _context.Collections
+            var collection_ = await _context.Collections.Include(i=> i.appUser)
                 .Include(x => x.Items)
                 .Include(x => x.CustomFields)
                 .FirstOrDefaultAsync(i => i.Id == Id);
@@ -78,31 +81,43 @@ namespace CollectionsApp.Controllers
 
             return View(itemPageVM);
         }
+        [HttpGet]
+        public async Task<IActionResult> ItemPage(string Id)
+        {
+            if (string.IsNullOrWhiteSpace(Id)) { return NotFound(); }
+            var item = await _context.Items.Include(i=>i.ItemCustomFieldVals).FirstOrDefaultAsync(x=> x.Id==Id);
+
+            return View(item);
+        }
 
 
         [HttpGet]
         public async Task<IActionResult> Create(string Id)
         {
             var ItemsVM = new ItemVM();
+
             if (Id == null)
             {
                 return NotFound();
             }
+
             var collection = await _context.Collections
-            .Include(u => u.CustomFields)
-            .FirstOrDefaultAsync(u => u.Id == Id);
+                .Include(u => u.CustomFields)
+                .FirstOrDefaultAsync(u => u.Id == Id);
 
             if (collection == null)
             {
                 return NotFound();
             }
+           
             foreach (var cf in collection.CustomFields)
             {
+             
                 ItemsVM.customs[cf.Label] = " ";
+                ItemsVM.customFieldTypes[cf.Label] = cf.customFieldType.ToString();
             }
 
             return View(ItemsVM);
-
         }
         [HttpPost]
         public async Task<IActionResult> Create(string Id, ItemVM model)
@@ -126,7 +141,7 @@ namespace CollectionsApp.Controllers
                             ItemId = item.Id,
                             CustomField = cf,
                             CustomFieldId = cf.Id,
-                            Value = model.customs[cf.Label],
+                            Value = cf.customFieldType == CustomFieldTypes.Logical ? model.customs[cf.Label] : model.customs[cf.Label],
                             Label = cf.Label
                         };
                         item.ItemCustomFieldVals.Add(cfValue);

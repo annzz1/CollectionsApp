@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace CollectionsApp.Controllers
 {
@@ -186,36 +187,36 @@ namespace CollectionsApp.Controllers
             return View(collectionvm);
         }
         [HttpPost]
-
         public async Task<IActionResult> Delete(List<string> ids)
         {
-
             if (ids.IsNullOrEmpty())
             {
                 return NotFound();
             }
+
+            // Retrieve the user ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             foreach (var id in ids)
             {
-                var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.Id == id);
-                var userid = await _context.Collections.FirstOrDefaultAsync(c => c.AppUserId == collection_.AppUserId);
+                var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == userId);
+
                 if (collection_ != null)
                 {
                     _context.Collections.Remove(collection_);
-                    _context.SaveChanges();
-
-                    return RedirectToAction("Profile", "Home", new { Id =userid });
-
                 }
                 else
                 {
                     return NotFound();
                 }
-
             }
-            return View();
 
+            await _context.SaveChangesAsync();
 
+            // Redirect to the Profile action in HomeController with userId
+            return RedirectToAction("Profile", "Home", new { Id = userId });
         }
+
 
 
 

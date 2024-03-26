@@ -1,16 +1,97 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<AppUser> _signinmanager
-@inject UserManager<AppUser> _usermanager
+@model IEnumerable<Collection>
+@inject UserManager<AppUser> usermanager
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+
+
+<div class="row">
+    <h3 style="color:#42b883">Top 5 Largest Collections</h3>
+    @foreach (var collection in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header" style="background-color:#97cba9">
+                    @if (User.IsInRole("Admin") || User.IsInRole("Member")||User.Identity.Name == collection.appUser.UserName)
+                   { <h5 class="card-title" >
+                        <a href="@Url.Action("Index", "Item", new { id = collection.Id })" style="color: white;">@collection.Name</a>
+                        </h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">
+                            <a href="@Url.Action("Register", "User")" style="color: white;">@collection.Name</a>
+                        </h5>
+                    }
+
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Current Number of items: @collection.Items.Count</p>
+                    
+                </div>
+            </div>
+        </div>
+    }
    
 </div>
-@if (User.IsInRole("Admin"))
-{
-    <p>HI admin</p>
-}
+
+<div class="row">
+    <h3 style="color:#e8751a">Latest Items</h3>
+    @foreach (var collection in Model)
+    {
+        @foreach (var item in collection.Items.OrderByDescending(i => i.AddedTime).Take(5))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    @if (User.IsInRole("Admin") || User.IsInRole("Member") || User.Identity.Name == collection.appUser.UserName)
+                    {
+                        <div class="card-header" style="background-color:#fdb44b; color: white;">
+                        <h5 class="card-title">
+                            <a href="@Url.Action("ItemPage", "Item", new { id = collection.Id })" style="color: white;">@item.Name</a>
+                        </h5>
+                        </div>
+                    }
+                    else
+                    {
+                        
+                       <div class="card-header" style="background-color:#fdb44b; color: white;">
+                        <h5 class="card-title">
+                                <a href="@Url.Action("Register", "User")" style="color: white;">@item.Name</a>
+                        </h5>
+                        </div>
+                    }
+                    <div class="card-body">
+                        @if (User.IsInRole("Admin") || User.IsInRole("Member") || User.Identity.Name == collection.appUser.UserName)
+                        {
+                            <p class="card-text"> Collection: <a href="@Url.Action("Index", "Item", new { id = collection.Id })
+                                " style="color:black"> @collection.Name
+                                </a></p>
+                        }
+                        else
+                        {
+                           <p class="card-text"> Collection:
+                                <a href="@Url.Action("Register", "User")" style="color: black">@collection.Name</a>
+                           </p>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Member") || User.Identity.Name == collection.appUser.UserName)
+                        {
+                            <p class="card-text"> User:  <a href="@Url.Action("Profile", "Home", new { id = collection.AppUserId })" style="color:black">@collection.appUser.UserName</a></p>
+                        }
+                        else
+                        {
+                            <p class="card-text">
+                                User:
+                                <a href="@Url.Action("Register", "User")" style="color: black">@collection.appUser.UserName</a>
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    
+</div>

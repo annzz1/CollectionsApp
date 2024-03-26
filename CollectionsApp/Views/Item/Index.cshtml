@@ -7,11 +7,17 @@
 <div class="container mt-5">
     <div class="row mb-3">
         <div class="col-md-6">
-            <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.collection.Id">
-                <button type="submit" class="btn btn-info">
-                    <i class="fa-solid fa-plus" style="margin-right: 5px;"></i>Add Item
-                </button>
-            </form>
+            @if (User.IsInRole("Admin") || User.Identity.Name == Model.collection.appUser.UserName)
+            {
+                <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.collection.Id">
+                    <button type="submit" class="btn btn-info">
+                        <i class="fa-solid fa-plus" style="margin-right: 5px;"></i>Add Item
+                    </button>
+                </form>
+            }
+
+            
+
             <form class="d-inline-block" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.collection.AppUserId">
                 <button type="submit" class="btn btn-warning">
                     <i class="fa-solid fa-circle-chevron-left" style="margin-right: 5px;"></i>Back to collection(s)
@@ -46,34 +52,41 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var Item in Model.items)
-                    {
-                        <tr class="table-light">
-                            <td>@Item.Name</td>
-                            <td>@Item.Tags</td>
+                @foreach (var Item in Model.items)
+                {
+                    <tr class="table-light">
+                        <td><a href="@Url.Action("ItemPage", "Item", new {id = @Item.Id})">@Item.Name</a></td>
+                        <td>@Item.Tags</td>
                         @foreach (var cf in Model.collection.CustomFields)
                         {
                             var customFieldVal = Item.ItemCustomFieldVals.FirstOrDefault(icf => icf.CustomFieldId == cf.Id);
                             <td>@(customFieldVal != null ? customFieldVal.Value : "")</td>
                         }
                         <td class="td-buttons">
-                            <form id="DeleteItemForm" asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
-                                <input type="hidden" id="DeleteItemFormItemIds" name="itemIds" />
-                                <button type="submit" class="btn btn-danger" style="display: inline-block;">
-                                    Delete
-                                    <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
-                                </button>
-                            </form>
+                            @if (User.IsInRole("Admin") || User.Identity.Name == Model.collection.appUser.UserName)
+                            {
+                                <form id="DeleteItemForm_@Item.Id" asp-controller="Item" asp-action="Delete" method="post" asp-route-id="@Item.Id">
+                                    <input type="hidden" id="DeleteItemFormItemIds_@Item.Id" name="itemIds" />
+                                    <button type="submit" class="btn btn-danger" style="display: inline-block;">
+                                        Delete
+                                        <i class="fa-regular fa-trash-can" style="margin-left: 5px"></i>
+                                    </button>
+                                </form>
+                            }
 
-                            <form id="EditItemForm_@Item.Id" asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
-                                <input type="hidden" id="EditItemFormItemIds_@Item.Id" name="itemIds" />
-                                <button type="submit" class="btn btn-success" form="EditItemForm_@Item.Id" style="display: inline-block;">
-                                    Edit <i class="fa-solid fa-sliders" style="margin-left: 5px"></i>
-                                </button>
-                            </form>
+                            @if (User.IsInRole("Admin") || User.Identity.Name == Model.collection.appUser.UserName)
+                            {
+                                <form id="EditItemForm_@Item.Id" asp-controller="Item" asp-action="Edit" method="get" asp-route-id="@Item.Id">
+                                    <input type="hidden" id="EditItemFormItemIds_@Item.Id" name="itemIds" />
+                                    <button type="submit" class="btn btn-success" form="EditItemForm_@Item.Id" style="display: inline-block;">
+                                        Edit <i class="fa-solid fa-sliders" style="margin-left: 5px"></i>
+                                    </button>
+                                </form>
+                            }
                         </td>
-                        </tr>
-                    }
+                    </tr>
+                }
+
                 </tbody>
             </table>
         </div>

@@ -1,0 +1,36 @@
+﻿@model Item
+
+@{
+    ViewData["Title"] = "Item Details";
+}
+<div class="container-item">
+    <div class="row">
+        <div class="col">
+            <form method="get" asp-controller="Item" asp-action="Index" asp-route-id="@Model.CollectionId">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fa-solid fa-circle-chevron-left" style="margin-right: 5px;"></i>Back to Item(s)
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="item-box">
+                <h1>@Model.Name</h1>
+                <div>
+                    <h3>Tags:</h3>
+                    <p>@Model.Tags</p>
+                </div>
+                <div>
+                    <h3>Custom Fields:</h3>
+                    <ul>
+                        @foreach (var customFieldVal in Model.ItemCustomFieldVals)
+                        {
+                            <li>@customFieldVal.Label: @customFieldVal.Value</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
