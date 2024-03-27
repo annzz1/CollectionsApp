@@ -1,5 +1,7 @@
 using CollectionsApp.Data;
 using CollectionsApp.Models;
+using CollectionsApp.ServiceContracts;
+using CollectionsApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CollectionsAppCnn")));
 
-
+builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 

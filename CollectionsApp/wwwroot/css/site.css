@@ -92,13 +92,13 @@
         background-color: #292e33; /* Slightly darker shade of dark gray */
     }
 .btn-softblue {
-    background-color: #407088;
+    background-color: #567c8f;
 }
     .btn-softblue:hover {
-        background-color: #132743;
+        background-color: #407088;
     }
 .btn-softpink {
-    background-color: #ffcbcb;
+    background-color: #ff847c;
 }
 
     .btn-softpink:hover {

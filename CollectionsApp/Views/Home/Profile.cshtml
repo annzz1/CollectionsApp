@@ -8,7 +8,7 @@
 }
 <div class="personal-info-box">
     <div class="header-container">
-        <h2 style="color:#feffdf; display: inline;">Personal Information</h2>
+        <h2 style="color:#b6d4e3; display: inline;">Personal Information</h2>
         <form asp-controller="User" asp-action="Edit" method="get" asp-route-id="@Model.Id" style="display: inline;">
             <button type="submit" class="btn btn-softblue" style="margin-top: -8px; margin-left: 10px;">
                 Edit <i class="fa-regular fa-pen-to-square" style="margin-left: 5px;"></i>
@@ -34,33 +34,35 @@
     <div class="row">
         <div class="col">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <!-- Add Collection Form -->
-                <form method="get" asp-controller="Collection" asp-action="Create" asp-route-id="@Model.Id">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fa-solid fa-folder-plus" style="margin-right: 5px;"></i> Add Collection
-                    </button>
-                </form>
-                <!-- Delete and Edit Buttons -->
-                <div>
-                    <button type="button" class="btn btn-danger deleteSelected mr-2">
-                        <i class="fa-regular fa-trash-can" style="margin-right: 5px;"></i>Delete
-                    </button>
-                    <button type="button" class="btn btn-warning editSelected">
-                        <i class="fa-solid fa-pen-to-square" style="margin-right: 5px;"></i>Edit
-                    </button>
-                </div>
+                @if (User.IsInRole("Admin") || User.Identity.Name == Model.UserName)
+                {
+                    <!-- Add Collection Form -->
+                    <form method="get" asp-controller="Collection" asp-action="Create" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-folder-plus" style="margin-right: 5px;"></i> Add Collection
+                        </button>
+                    </form>
+                    <!-- Delete and Edit Buttons -->
+                    <div>
+                        <button type="button" class="btn btn-danger deleteSelected mr-2">
+                            <i class="fa-regular fa-trash-can" style="margin-right: 5px;"></i>Delete
+                        </button>
+                        <button type="button" class="btn btn-warning editSelected">
+                            <i class="fa-solid fa-pen-to-square" style="margin-right: 5px;"></i>Edit
+                        </button>
+                    </div>
+                }
             </div>
             <!-- Table -->
             <table class="table table-hover">
                 <!-- Table Header -->
                 <thead class="thead" style="background-color:#ffb5b5">
                     <tr>
-                        <th scope="col"><input type="checkbox" id="selectAll" /></th>
+                        <th scope="col"></th>
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Category</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
+
                     </tr>
                 </thead>
                 
@@ -72,7 +74,7 @@
                             <td><a href="@Url.Action("Index", "Item", new {id = collection.Id})">@collection.Name</a></td>
                             <td>@collection.Description</td>
                             <td>@collection.category</td>
-                            <td class="td-buttons"></td>
+                            
                         </tr>
                     }
                 </tbody>

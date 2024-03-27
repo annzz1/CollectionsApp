@@ -21,7 +21,7 @@ namespace CollectionsApp.Controllers
             _context = context;
             _userManager = userManager;
         }
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> Index(string Id, string sortOrder, string searchString)
         {
@@ -112,9 +112,19 @@ namespace CollectionsApp.Controllers
            
             foreach (var cf in collection.CustomFields)
             {
-             
-                ItemsVM.customs[cf.Label] = " ";
+              if(cf.customFieldType== CustomFieldTypes.Logical)
+                {
+                    ItemsVM.customs[cf.Label] = "False"; // Default value for other types
+                }
+                else
+                {
+                    ItemsVM.customs[cf.Label] = ""; // Default value for other types
+                }
+                
+                    
+                
                 ItemsVM.customFieldTypes[cf.Label] = cf.customFieldType.ToString();
+               
             }
 
             return View(ItemsVM);
@@ -141,9 +151,12 @@ namespace CollectionsApp.Controllers
                             ItemId = item.Id,
                             CustomField = cf,
                             CustomFieldId = cf.Id,
-                            Value = cf.customFieldType == CustomFieldTypes.Logical ? model.customs[cf.Label] : model.customs[cf.Label],
+                            Value = model.customs[cf.Label],
                             Label = cf.Label
                         };
+                       
+                           
+                        
                         item.ItemCustomFieldVals.Add(cfValue);
                         cf.CustomFieldVals.Add(cfValue);
                         _context.CustomFieldsValues.Add(cfValue);

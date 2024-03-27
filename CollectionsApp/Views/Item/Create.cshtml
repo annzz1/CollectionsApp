@@ -45,17 +45,16 @@
                                         <textarea asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key"></textarea>
                                         <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="MultilineText" />
                                         break;
-                                    case "Logical": //fix this
-                                        <input type="hidden" name="@Model.customs[item.Key]" value="False" />
-                                        <input type="checkbox" name="@Model.customs[item.Key]" class="form-check-input" maxlength="100" data-key="@item.Key"
-                                        value = "true" @(Model.customs[@item.Key] == "True" ? "checked" : "") />
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Logical" />
-                                        break;
-
+                                 
                                     case "DateTime":
                                         <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" type="datetime-local" data-key="@item.Key" />
                                         <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="DateTime" />
                                         break;
+                                    case "Logical":
+                                        <input asp-for="@Model.customs[item.Key]" class="custom-Value" type="checkbox" data-key="@item.Key" />
+                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Logical" />
+                                        break;
+                                   
                                 }
                                 <span asp-validation-for="@Model.customs[item.Key]" class="text-danger"></span>
                             </div>

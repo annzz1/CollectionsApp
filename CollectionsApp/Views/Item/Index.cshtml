@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
     <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="col-md-12">
             @if (User.IsInRole("Admin") || User.Identity.Name == Model.collection.appUser.UserName)
             {
                 <form class="d-inline-block mr-2" method="get" asp-controller="Item" asp-action="Create" asp-route-id="@Model.collection.Id">
@@ -16,25 +16,23 @@
                 </form>
             }
 
-            
-
-            <form class="d-inline-block" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.collection.AppUserId">
+            <form class="d-inline-block mr-2" method="get" asp-controller="Home" asp-action="Profile" asp-route-id="@Model.collection.AppUserId">
                 <button type="submit" class="btn btn-warning">
                     <i class="fa-solid fa-circle-chevron-left" style="margin-right: 5px;"></i>Back to collection(s)
                 </button>
             </form>
-            <form class="d-inline-block ml-2" asp-controller="Items" asp-action="Index" method="get">
-              
-                <select class="form-control form-control-sm" onchange="location = this.value;">
-                    <option value="@Url.Action("Index", new { sortOrder = ViewBag.CurrentSort, Id = Model.collection.Id, searchString = ViewBag.SearchString })">-Select Column --</option>
+
+            <form class="d-inline-block" asp-controller="Items" asp-action="Index" method="get">
+                <select class="form-control form-control-sm custom-select" style="width: 200px; font-size: 14px; outline: 2px solid #be3144; height: 38px;" onchange="location = this.value;">
+                    <option value="@Url.Action("Index", new { sortOrder = ViewBag.CurrentSort, Id = Model.collection.Id, searchString = ViewBag.SearchString })">--Select Column --</option>
                     <option value="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, Id = Model.collection.Id, searchString = ViewBag.SearchString })">Name</option>
                     <option value="@Url.Action("Index", new { sortOrder = ViewBag.TagsSortParam, Id = Model.collection.Id, searchString = ViewBag.SearchString })">Tags</option>
-                  
                 </select>
             </form>
         </div>
     </div>
 </div>
+
 
 
     <div class="row">

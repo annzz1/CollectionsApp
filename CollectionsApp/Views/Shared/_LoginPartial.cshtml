@@ -7,13 +7,24 @@
 
 <ul class="navbar-nav">
 
+    <li>
+        <form class="d-flex ms-auto" asp-controller="Search" asp-action="Index" method="get">
+            <input class="form-control me-2" type="text" name="searchTerm" placeholder="Search..." aria-label="Search" style="width: 300px;">
+           
+            <button class="btn btn-softblue" type="submit"><i class="fa-solid fa-magnifying-glass" style="margin-right:5px"></i>Search</button>
+        </form>
+    </li>
+
+ 
         @if (SignInManager.IsSignedIn(User))
         {
-       
-              <li class="nav-item dropdown move-left">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"style="font-size:16px">
+
+
+        <li class="nav-item dropdown move-left">
+            <div class="btn-group">
+                <button type="button" class="btn btn-softpink dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 16px;">
                     @User.Identity!.Name
-                </a>
+                </button>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li>
                         <a class="dropdown-item" asp-action="Logout" asp-controller="User">
@@ -21,7 +32,9 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </div>
+        </li>
+
         }
        
  else
