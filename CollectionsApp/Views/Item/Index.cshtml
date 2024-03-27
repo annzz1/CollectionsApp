@@ -3,6 +3,33 @@
 @{
     ViewData["Title"] = "Items";
 }
+<div class="card">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.collection.PhotoUrl))
+                {
+                    <img src="@Model.collection.PhotoUrl" class="img-fluid mx-auto d-block" style="max-height: 300px;" alt="Collection Image">
+                }
+                else
+                {
+                    <div style="background-color:darkgray">
+                    <p><strong>No image uploaded.<strong></p>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <p class="card-text" style="color:#9d53c3"><strong>Collection Name:</strong> @Model.collection.Name</p>
+                <p class="card-text" style="color: #9d53c3"><strong> Collection Description:</strong> @Model.collection.Description</p>
+                <p class="card-text" style="color: #9d53c3"><strong>Collection Category:</strong> @Model.collection.category</p>
+                <p class="card-text" style="color: #9d53c3"><strong>Current Number of Items:</strong> @Model.collection.Items.Count</p>
+                <p class="card-text" style="color: #9d53c3"><strong>Collection Owner:</strong> @Model.collection.appUser.UserName</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container mt-5">
     <div class="row mb-3">
@@ -31,8 +58,6 @@
             </form>
         </div>
     </div>
-</div>
-
 
 
     <div class="row">

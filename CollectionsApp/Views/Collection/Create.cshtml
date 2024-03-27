@@ -1,4 +1,4 @@
-﻿ @using CollectionsApp.ViewModels;
+﻿@using CollectionsApp.ViewModels;
 @using CollectionsApp.Enums;
 @model CollectionVM
 @{
@@ -7,35 +7,32 @@
     var customfieldtypes = Enum.GetValues(typeof(CustomFieldTypes));
 }
 <div class="row">
-        <div class="col-md-4">
-            <form id="newCollectionForm" method="post">
+    <div class="col-md-4">
+        <form id="newCollectionForm" method="post" enctype="multipart/form-data">
             <h2 class="form-floating mb-3" style="color:#132743">Create a new Collection.</h2>
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Name" class="form-control" aria-required="true" />
-                    <label asp-for="Name">Name</label>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-
-                    <textarea asp-for="Description" class="form-control" aria-required="true"></textarea>
-                    <label asp-for="Description">Description</label>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                
-                <div class="form-floating mb-3">
-                    <select asp-for="category" class="form-select" aria-required="true">
-                        <option value="">Select Category</option>
-                        @foreach(var categ in categories)
-                        {
-                            <option value=@categ>@categ</option>
-                        }
-                    </select>
-                    <label asp-for="category">Category</label>
-                    <span asp-validation-for="category" class="text-danger"></span>
-                </div>
-
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" aria-required="true" />
+                <label asp-for="Name">Name</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea asp-for="Description" class="form-control" aria-required="true"></textarea>
+                <label asp-for="Description">Description</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <select asp-for="category" class="form-select" aria-required="true">
+                    <option value="">Select Category</option>
+                    @foreach (var categ in categories)
+                    {
+                        <option value="@categ">@categ</option>
+                    }
+                </select>
+                <label asp-for="category">Category</label>
+                <span asp-validation-for="category" class="text-danger"></span>
+            </div>
             <div id="CustomFields">
                 <div class="customfield-template" style="display: none;">
                     <div class="form-group" style="display: inline-block;">
@@ -57,13 +54,17 @@
                     </div>
                 </div>
             </div>
-
-
-                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
-                <button type="submit" class="btn btn-info ">Create</button>
-            </form>
-        </div>
+            <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
+            <!-- Photo upload field -->
+            <div>
+                <label for="photo">Upload a file</label>
+                <input type="file" id="photo" name="photo" accept="image/*" asp-for="Photo">
+            </div>
+            <button type="submit" class="btn btn-info">Create</button>
+        </form>
+    </div>
 </div>
+
 
 @section Scripts {
     <script>

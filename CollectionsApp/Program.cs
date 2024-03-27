@@ -1,16 +1,18 @@
+using Azure.Storage.Blobs;
 using CollectionsApp.Data;
 using CollectionsApp.Models;
 using CollectionsApp.ServiceContracts;
 using CollectionsApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CollectionsAppCnn")));
-
+builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration.GetConnectionString("AzureStorageConnectionString")));
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 

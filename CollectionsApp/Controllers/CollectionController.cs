@@ -1,4 +1,6 @@
-﻿using CollectionsApp.Data;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using CollectionsApp.Data;
 using CollectionsApp.Models;
 using CollectionsApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -11,25 +13,38 @@ using System.Security.Claims;
 
 namespace CollectionsApp.Controllers
 {
+ 
     public class CollectionController : Controller
     {
         private readonly AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly BlobServiceClient _blobServiceClient;
 
-        public CollectionController(AppDbContext context, UserManager<AppUser> userManager)
+        public CollectionController(AppDbContext context, UserManager<AppUser> userManager, BlobServiceClient blobServiceClient)
         {
             _context = context;
             _userManager = userManager;
+            _blobServiceClient = blobServiceClient;
+
+        }
+        private async Task EnsureContainerExistsAsync(string containerName)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var exists = await containerClient.ExistsAsync();
+
+            if (!exists)
+            {
+                await containerClient.CreateAsync(PublicAccessType.BlobContainer);
+                Console.WriteLine($"Container '{containerName}' created.");
+            }
         }
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
-        
         [HttpPost]
         public async Task<IActionResult> Create(string Id, CollectionVM model)
-        
         {
             if (ModelState.IsValid)
             {
@@ -38,14 +53,16 @@ namespace CollectionsApp.Controllers
                     Name = model.Name,
                     Description = model.Description,
                     category = model.category,
-                    
+                    // Assuming you have a property in your Collection model to store the URL of the uploaded photo
+                    // Update the property with the URL of the uploaded photo
+                    PhotoUrl = model.Photo != null ? await UploadPhotoAsync(model.Photo) : null,
                 };
 
                 var user = await _context.Users.Include(u => u.Collections).FirstOrDefaultAsync(u => u.Id == Id);
 
                 if (user != null)
                 {
-                    if(model.CustomFields!=null && model.CustomFields.Any())
+                    if (model.CustomFields != null && model.CustomFields.Any())
                     {
                         foreach (var cf in model.CustomFields)
                         {
@@ -57,13 +74,13 @@ namespace CollectionsApp.Controllers
                                 CollectionId = collection.Id
                             };
                             _context.CustomFields.Add(customfield);
-                           // collection.CustomFields.Add(customfield);
                         }
                     }
+
                     collection.appUser = user;
                     collection.AppUserId = user.Id;
                     _context.Collections.Add(collection);
-                    //user.Collections.Add(collection);
+
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
@@ -80,6 +97,28 @@ namespace CollectionsApp.Controllers
             var collection_ = await _context.Collections.FirstOrDefaultAsync(c => c.AppUserId == Id);
             return View(collection_);
         }
+
+        // Method to upload photo to Azure Blob Storage and return its URL
+        private async Task<string> UploadPhotoAsync(IFormFile photo)
+        {
+            if (photo == null || photo.Length == 0)
+            {
+                return null;
+            }
+
+            // Upload photo to Azure Blob Storage
+            var containerClient = _blobServiceClient.GetBlobContainerClient("photos");
+            await containerClient.CreateIfNotExistsAsync();
+            var blobClient = containerClient.GetBlobClient(Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
+
+            using (var stream = photo.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, true);
+            }
+
+            return blobClient.Uri.ToString();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Edit(string ids)
         {
