@@ -43,15 +43,7 @@
                 <label asp-for="ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-                <div class="form-floating mb-3">
-                    <select asp-for="Role" class="form-select" aria-required="true">
-                        <option value="">Select Role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Member">Member</option>
-                    </select>
-                    <label asp-for="Role">Roles</label>
-                    <span asp-validation-for="Role" class="text-danger"></span>
-                </div>
+              
 
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-softblue" style="padding: 10px 30px; font-size: 24px; height: 50px; text-align: center;">Register</button>
 

@@ -44,7 +44,7 @@
                             <button type="submit" class="btn btn-primary">Add</button>
                         </form>
 
-                        <!-- Button for liking/unliking the item -->
+                        
                         @if (User.Identity.IsAuthenticated)
                         {
                             bool liked = ViewBag.LikedByCurrentUser;
@@ -69,7 +69,7 @@
                         }
                     </div>
 
-                    <!-- Display count of likes and comments -->
+                    
                     <p class="mt-2"><i class="fa-regular fa-comment"></i> Comments: @Model.Comments.Count()</p>
                     <p><i class="fa-regular fa-heart"></i> Likes: @Model.Likes.Count()</p>
                 </div>
@@ -79,7 +79,7 @@
 
     <div class="row">
         <div class="col">
-            <!-- Display comments -->
+          
             <h3>Comments:</h3>
             <ul class="comment-list">
                 @foreach (var comment in Model.Comments)
@@ -91,7 +91,7 @@
                             <p style="color:darkgray">@comment.CreatedAt</p>
                         </div>
 
-                        @if (User.Identity.IsAuthenticated && comment.appuser.UserName == User.Identity.Name)
+                        @if (User.Identity.IsAuthenticated && (comment.appuser.UserName == User.Identity.Name|| User.IsInRole("Admin")))
                         {
                             <form method="post" asp-controller="Item" asp-action="DeleteComment" class="ms-2">
                                 <input type="hidden" name="commentId" value="@comment.Id" />

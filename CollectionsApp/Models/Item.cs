@@ -24,7 +24,9 @@ namespace CollectionsApp.Models
         public virtual ICollection<Like> Likes { get; set; }
         public Item()
         {
+            Comments = new List<Comment>();
             ItemCustomFieldVals = new List<ItemCustomFieldVal>();
+            Likes = new List<Like>();
         }
     }
 }

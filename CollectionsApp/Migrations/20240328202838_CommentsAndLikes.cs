@@ -16,7 +16,7 @@ namespace CollectionsApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    itemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -31,8 +31,8 @@ namespace CollectionsApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comment_Item_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_Comment_Item_itemId",
+                        column: x => x.itemId,
                         principalTable: "Item",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -69,9 +69,9 @@ namespace CollectionsApp.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_ItemId",
+                name: "IX_Comment_itemId",
                 table: "Comment",
-                column: "ItemId");
+                column: "itemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Like_AppUserId",

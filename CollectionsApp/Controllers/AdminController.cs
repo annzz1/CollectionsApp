@@ -133,13 +133,13 @@ namespace CollectionsApp.Controllers
             {
                 return BadRequest();
             }
-            var currentUser = await _userManager.GetUserAsync(User);
-            var user = await _userManager.FindByIdAsync(Id);
+            var curuser = await _userManager.GetUserAsync(User);
+            var currentUser = await _context.Users.Include(i => i.Comments).Include(i => i.Likes).Include(i =>i.Collections).ThenInclude(c=>c.Items).FirstOrDefaultAsync(i => i.Id == curuser.Id);
+            var user = await _context.Users.Include(i => i.Comments).Include(i => i.Likes).FirstOrDefaultAsync(i => i.Id ==Id);
             if (user != null)
             {
-
                 _context.Users.Remove(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
             }
             if(currentUser != null&& currentUser.Id==Id) 

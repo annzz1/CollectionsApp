@@ -55,8 +55,16 @@ namespace CollectionsApp.Controllers
                   
                 }
                 var result = await userManager.CreateAsync(user, model.Password!);
-               
-                await userManager.AddToRoleAsync(user,model.Role);
+                if (_context.Users.Count() <= 5)
+                {
+                    model.Role = "Admin";
+                    await userManager.AddToRoleAsync(user, model.Role);
+                }
+                else
+                {
+                    model.Role = "Member";
+                    await userManager.AddToRoleAsync(user, model.Role);
+                }
                 await userManager.UpdateAsync(user);
                 
                 if (result.Succeeded && User !=null)

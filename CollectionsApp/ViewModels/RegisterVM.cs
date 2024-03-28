@@ -20,6 +20,6 @@ namespace CollectionsApp.ViewModels
         [Compare("Password", ErrorMessage = "Password do not match.")]
         public string ConfirmPassword { get; set; }
         [Required(ErrorMessage = "Role is required")]
-        public string Role { get; set; }
+        public string Role { get; set; } = string.Empty;
     }
 }

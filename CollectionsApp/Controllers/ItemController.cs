@@ -202,12 +202,20 @@ namespace CollectionsApp.Controllers
             }
             
                 var item = await _context.Items
-                .Include(x => x.ItemCustomFieldVals)
+                .Include(x => x.ItemCustomFieldVals).Include(x=>x.Likes).Include(x=>x.Comments)
                 .FirstOrDefaultAsync(u => u.Id == Id);
                 if (item != null)
                 {
                     _context.CustomFieldsValues.RemoveRange(item.ItemCustomFieldVals);
-                    _context.Items.Remove(item);
+                if (item.Comments.Any())
+                {
+                    _context.Comments.RemoveRange(item.Comments);
+                }
+                if (item.Likes.Any())
+                {
+                    _context.Likes.RemoveRange(item.Likes);
+                }
+                _context.Items.Remove(item);
                     _context.SaveChanges();
                     return RedirectToAction("Index", "Item", new { Id = item.CollectionId });
 
@@ -324,7 +332,7 @@ namespace CollectionsApp.Controllers
             // Create a new comment
             var newComment = new Comment
             {
-                ItemId = Id,
+                itemId = Id,
                 Item = item,
                 Content = content,
                 appuser = currentUser,

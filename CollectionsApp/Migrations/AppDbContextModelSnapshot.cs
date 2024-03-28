@@ -145,7 +145,7 @@ namespace CollectionsApp.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ItemId")
+                    b.Property<string>("itemId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -153,7 +153,7 @@ namespace CollectionsApp.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("itemId");
 
                     b.ToTable("Comment");
                 });
@@ -414,7 +414,7 @@ namespace CollectionsApp.Migrations
 
                     b.HasOne("CollectionsApp.Models.Item", "Item")
                         .WithMany("Comments")
-                        .HasForeignKey("ItemId")
+                        .HasForeignKey("itemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
