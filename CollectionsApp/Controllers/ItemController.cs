@@ -5,6 +5,7 @@ using CollectionsApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -85,8 +86,14 @@ namespace CollectionsApp.Controllers
         public async Task<IActionResult> ItemPage(string Id)
         {
             if (string.IsNullOrWhiteSpace(Id)) { return NotFound(); }
-            var item = await _context.Items.Include(i=>i.ItemCustomFieldVals).FirstOrDefaultAsync(x=> x.Id==Id);
+            var item = await _context.Items.Include(i=>i.ItemCustomFieldVals).Include(x=>x.Likes).Include(y=>y.Comments).FirstOrDefaultAsync(x=> x.Id==Id);
+            var currentUser = await _userManager.GetUserAsync(User);
 
+            // Check if the current user has liked the item
+            bool likedByCurrentUser = item.Likes.Any(l => l.AppUserId == currentUser.Id);
+
+            // Pass the item and like status to the view
+            ViewBag.LikedByCurrentUser = likedByCurrentUser;
             return View(item);
         }
 
@@ -275,6 +282,114 @@ namespace CollectionsApp.Controllers
 
             }
             return View(item);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddLike(string Id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var item = await _context.Items
+                .Include(i => i.collection)
+                .ThenInclude(x => x.appUser)
+                .FirstOrDefaultAsync(t => t.Id == Id);
+
+
+            // Create a new like
+            var newLike = new Like
+            {
+                ItemId = Id,
+                 AppUserId = currentUser.Id,
+                 appuser = currentUser,
+                Item = item
+            };
+
+            // Add the like to the database
+            _context.Likes.Add(newLike);
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return RedirectToAction("ItemPage", "Item", new { Id = Id });
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(string Id, string content)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var item = await _context.Items.Include(i => i.collection).ThenInclude(x => x.appUser).FirstOrDefaultAsync(t => t.Id == Id);
+            // Create a new comment
+            var newComment = new Comment
+            {
+                ItemId = Id,
+                Item = item,
+                Content = content,
+                appuser = currentUser,
+                AppUserId = currentUser.Id
+              
+            };
+
+            
+            _context.Comments.Add(newComment);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return RedirectToAction("ItemPage", "Item", new { Id = item.Id });
+            }
+            else
+            {
+                return NotFound();
+            }
+            
+            
+        }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> DeleteComment(string commentId, string itemId)
+        {
+            var comment = await _context.Comments.Include(i => i.appuser).Include(i => i.appuser).FirstOrDefaultAsync(x => x.Id == commentId);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            if (comment.appuser.UserName != User.Identity.Name)
+            {
+                return Forbid();
+            }
+
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ItemPage", "Item", new { Id = itemId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemoveLike(string Id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            // Find the like to remove
+            var likeToRemove = await _context.Likes.Include(x=> x.Item).FirstOrDefaultAsync(l => l.ItemId == Id && l.AppUserId == currentUser.Id);
+
+            if (likeToRemove != null)
+            {
+                // Remove the like from the database
+                _context.Likes.Remove(likeToRemove);
+              
+            }
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return RedirectToAction("ItemPage", "Item", new { Id = Id });
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+          
         }
     }
 }

@@ -4,74 +4,77 @@
 @model ItemVM
 @{
     ViewData["Title"] = "Create";
-   
+
 }
+@if (User.Identity.IsAuthenticated)
+{
 
-<body>
-    <div class="row">
-        <div class="col-md-4">
-            <form id="newItemForm" method="post">
-                <h2 class="form-floating mb-3" style="color:#132743">Create a new Item.</h2>
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Name" class="form-control" aria-required="true" />
-                    <label asp-for="Name">Name</label>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-
-                    <input asp-for="Tags" class="form-control" aria-required="true" />
-                    <label asp-for="Tags">Tags</label>
-                    <span asp-validation-for="Tags" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <div class="custom-field">
-                        @foreach (var item in Model.customs)
-                        {
-                            <div>
-                                <label>@item.Key</label>
-                                @switch (Model.customFieldTypes[item.Key])
-                                {
-                                    case "Text":
-                                        <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Text" />
-                                        break;
-                                    case "Numeric":
-                                        <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" type="number" maxlength="100" data-key="@item.Key" />
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Numeric" />
-                                        break;
-                                    case "MultilineText":
-                                        <textarea asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key"></textarea>
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="MultilineText" />
-                                        break;
-                                 
-                                    case "DateTime":
-                                        <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" type="datetime-local" data-key="@item.Key" />
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="DateTime" />
-                                        break;
-                                    case "Logical":
-                                        <input asp-for="@Model.customs[item.Key]" class="custom-Value" type="checkbox" data-key="@item.Key" />
-                                        <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Logical" />
-                                        break;
-                                   
-                                }
-                                <span asp-validation-for="@Model.customs[item.Key]" class="text-danger"></span>
-                            </div>
-                        }
+    <body>
+        <div class="row">
+            <div class="col-md-4">
+                <form id="newItemForm" method="post">
+                    <h2 class="form-floating mb-3" style="color:#132743">Create a new Item.</h2>
+                    <hr />
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" aria-required="true" />
+                        <label asp-for="Name">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                </div>
+                    <div class="form-floating mb-3">
 
-              
-                <button id="NewItemForm" type="submit" class="btn btn-info">
-                    <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Submit
-                </button>
-              
-            </form>
+                        <input asp-for="Tags" class="form-control" aria-required="true" />
+                        <label asp-for="Tags">Tags</label>
+                        <span asp-validation-for="Tags" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <div class="custom-field">
+                            @foreach (var item in Model.customs)
+                            {
+                                <div>
+                                    <label>@item.Key</label>
+                                    @switch (Model.customFieldTypes[item.Key])
+                                    {
+                                        case "Text":
+                                            <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
+                                            <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Text" />
+                                            break;
+                                        case "Numeric":
+                                            <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" type="number" maxlength="100" data-key="@item.Key" />
+                                            <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Numeric" />
+                                            break;
+                                        case "MultilineText":
+                                            <textarea asp-for="@Model.customs[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key"></textarea>
+                                            <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="MultilineText" />
+                                            break;
+
+                                        case "DateTime":
+                                            <input asp-for="@Model.customs[item.Key]" class="form-control custom-Value" type="datetime-local" data-key="@item.Key" />
+                                            <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="DateTime" />
+                                            break;
+                                        case "Logical":
+                                            <input asp-for="@Model.customs[item.Key]" class="custom-Value" type="checkbox" data-key="@item.Key" />
+                                            <input type="hidden" asp-for="@Model.customFieldTypes[item.Key]" value="Logical" />
+                                            break;
+
+                                    }
+                                    <span asp-validation-for="@Model.customs[item.Key]" class="text-danger"></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+
+                    <button id="NewItemForm" type="submit" class="btn btn-info">
+                        <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Submit
+                    </button>
+
+                </form>
+            </div>
+
         </div>
-
-    </div>
-</body>
+    </body>
+}
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 

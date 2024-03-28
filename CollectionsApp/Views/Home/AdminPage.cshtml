@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Admin Page";
 }
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
 <div class="container">
     <div class="row">
         <div class="col">
@@ -87,6 +89,7 @@
         </div>
     </div>
 </div>
+}
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {

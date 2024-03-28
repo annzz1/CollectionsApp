@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Item Details";
 }
+
 <div class="container-item">
     <div class="row">
         <div class="col">
@@ -13,24 +14,95 @@
             </form>
         </div>
     </div>
+
     <div class="row">
         <div class="col">
             <div class="item-box">
-                <h1>@Model.Name</h1>
-                <div>
-                    <h3>Tags:</h3>
-                    <p>@Model.Tags</p>
+                <div class="item-info">
+                    <h1>@Model.Name</h1>
+                    <div>
+                        <h3>Tags:</h3>
+                        <p>@Model.Tags</p>
+                    </div>
+                    <div>
+                        <h3>Custom Fields:</h3>
+                        <ul>
+                            @foreach (var customFieldVal in Model.ItemCustomFieldVals)
+                            {
+                                <li>@customFieldVal.Label: @customFieldVal.Value</li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-                <div>
-                    <h3>Custom Fields:</h3>
-                    <ul>
-                        @foreach (var customFieldVal in Model.ItemCustomFieldVals)
+
+                <div class="item-actions">
+                    <div class="action-row">
+                        <!-- Form for adding a comment -->
+                        <form method="post" asp-controller="Item" asp-action="AddComment" class="d-flex align-items-center">
+                            <input type="hidden" name="Id" value="@Model.Id" />
+                            <textarea name="content" rows="1" placeholder="Add a comment" class="form-control me-2"></textarea>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+
+                        <!-- Button for liking/unliking the item -->
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            <li>@customFieldVal.Label: @customFieldVal.Value</li>
+                            bool liked = ViewBag.LikedByCurrentUser;
+                            if (liked)
+                            {
+                                <form method="post" asp-controller="Item" asp-action="RemoveLike" class="ms-2">
+                                    <input type="hidden" name="Id" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-heart" style="color: white;"></i> Unlike</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="Item" asp-action="AddLike" class="ms-2">
+                                    <input type="hidden" name="Id" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-danger"><i class="fa-regular fa-heart"></i> Like</button>
+                                </form>
+                            }
                         }
-                    </ul>
+                        else
+                        {
+                            <p class="ms-2 mb-0">Please <a href="/User/Login">login</a> to like this item.</p>
+                        }
+                    </div>
+
+                    <!-- Display count of likes and comments -->
+                    <p class="mt-2"><i class="fa-regular fa-comment"></i> Comments: @Model.Comments.Count()</p>
+                    <p><i class="fa-regular fa-heart"></i> Likes: @Model.Likes.Count()</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <!-- Display comments -->
+            <h3>Comments:</h3>
+            <ul class="comment-list">
+                @foreach (var comment in Model.Comments)
+                {
+                    <li class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6><strong>@comment.appuser.UserName</strong></h6>
+                            @comment.Content
+                            <p style="color:darkgray">@comment.CreatedAt</p>
+                        </div>
+
+                        @if (User.Identity.IsAuthenticated && comment.appuser.UserName == User.Identity.Name)
+                        {
+                            <form method="post" asp-controller="Item" asp-action="DeleteComment" class="ms-2">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <input type="hidden" name="itemId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
 </div>
+

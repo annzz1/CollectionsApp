@@ -348,3 +348,36 @@ tr:nth-child(even) {
 .badge {
     margin-right: 0.5rem;
 }
+.item-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.item-info {
+    margin-bottom: 20px;
+}
+
+.item-actions {
+    margin-bottom: 20px;
+}
+
+.action-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+    .comment-list li {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }

@@ -20,7 +20,8 @@ namespace CollectionsApp.Models
 
         public virtual Collection collection { get; set; }
         public virtual ICollection<ItemCustomFieldVal> ItemCustomFieldVals { get; set; }
-
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
         public Item()
         {
             ItemCustomFieldVals = new List<ItemCustomFieldVal>();

@@ -34,10 +34,9 @@ namespace CollectionsApp.Models
 
         public virtual List<CustomField> CustomFields { get; set; }
 
-        // Property to hold the URL of the uploaded photo
+      
         public string PhotoUrl { get; set; }
-        /////
-        //TO DO OTHER OPTIONAL FIELDS
+       
     }
 
    

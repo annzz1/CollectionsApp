@@ -13,6 +13,8 @@ namespace CollectionsApp.Models
         [Required]
         public bool IsActive { get; set; } = true;
         public virtual ICollection<Collection> Collections { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }
     

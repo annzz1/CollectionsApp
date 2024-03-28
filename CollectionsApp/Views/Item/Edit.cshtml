@@ -4,50 +4,51 @@
 @{
     ViewData["Title"] = "Edit";
 }
+@if (User.Identity.IsAuthenticated)
+{
+    <h1>Edit</h1>
 
-<h1>Edit</h1>
-
-<h4>Item</h4>
-<hr />
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Edit" method="post" class="form">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label">Name</label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Tags" class="control-label">Tags</label>
-                    <input asp-for="Tags" class="form-control" />
-                    <span asp-validation-for="Tags" class="text-danger"></span>
-                </div>
-                @foreach (var item in Model.ItemCustomVals)
-                {
+    <h4>Item</h4>
+    <hr />
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="Edit" method="post" class="form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
                     <div class="form-group">
-                        <label>@item.Key</label>
-                        <input asp-for="ItemCustomVals[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
-                        <span asp-validation-for="ItemCustomVals[item.Key]" class="text-danger"></span>
-                        <button type="button" class="btn btn-danger remove-custom-field-btn" data-index="@item.Key">Delete</button>
+                        <label asp-for="Name" class="control-label">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                }
+                    <div class="form-group">
+                        <label asp-for="Tags" class="control-label">Tags</label>
+                        <input asp-for="Tags" class="form-control" />
+                        <span asp-validation-for="Tags" class="text-danger"></span>
+                    </div>
+                    @foreach (var item in Model.ItemCustomVals)
+                    {
+                        <div class="form-group">
+                            <label>@item.Key</label>
+                            <input asp-for="ItemCustomVals[item.Key]" class="form-control custom-Value" maxlength="100" data-key="@item.Key" />
+                            <span asp-validation-for="ItemCustomVals[item.Key]" class="text-danger"></span>
+                            <button type="button" class="btn btn-danger remove-custom-field-btn" data-index="@item.Key">Delete</button>
+                        </div>
+                    }
 
 
 
-                <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
-                <button id="newItemSubmit" type="submit" class="btn btn-info">Save Changes</button>
-            </form>
+                    <button type="button" class="btn btn-info " id="addBtn">Add Field</button>
+                    <button id="newItemSubmit" type="submit" class="btn btn-info">Save Changes</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to Items</a>
-</div>
-
+    <div>
+        <a asp-action="Index">Back to Items</a>
+    </div>
+}
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
